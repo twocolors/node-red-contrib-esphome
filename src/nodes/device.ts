@@ -14,6 +14,7 @@ module.exports = (RED: NodeAPI) => {
 
       self.device = {};
       self.entities = [];
+      self.current_status = 'disconnected';
 
       if (!config?.host || !config?.port || !self.credentials?.password) {
         return;

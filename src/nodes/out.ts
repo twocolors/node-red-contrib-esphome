@@ -1,9 +1,9 @@
-import {NodeAPI} from 'node-red';
+import nodeRed, {NodeAPI} from 'node-red';
 import {Status} from '../lib/utils';
 import {inspect} from 'util';
 
 module.exports = (RED: NodeAPI) => {
-  RED.nodes.registerType('esphome-in', function (this: any, config: any) {
+  RED.nodes.registerType('esphome-out', function (this: any, config: any) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     self.config = config;
@@ -39,28 +39,32 @@ module.exports = (RED: NodeAPI) => {
       }
     };
 
-    const onState = (state: any) => {
-      if (state.key != config.entity) {
+    self.on('input', async (msg: any, send: () => any, done: () => any) => {
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+      const command = entity.type.toLowerCase() + 'CommandService';
+
+      const regexp = /^(BinarySensor|Sensor|TextSensor)$/gi;
+      if (entity.type.match(regexp)) {
+        done();
         return;
       }
 
-      delete state.key;
-
-      let data = typeof state.state !== 'undefined' && typeof state.state !== 'object' ? state.state : inspect(state);
+      let data = msg.payload;
+      data = typeof data.state !== 'undefined' && typeof data.state !== 'object' ? data.state : inspect(data);
       if (data && data.length > 32) {
         data = data.substr(0, 32) + '...';
       }
       setStatus({fill: 'yellow', shape: 'dot', text: data}, 3000);
 
-      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+      try {
+        await self.deviceNode.client.connection[command]({key: config.entity, ...msg.payload});
+      } catch (e: any) {
+        setStatus(Status['error'], 3000);
+        self.error(e.message);
+      }
 
-      self.send({
-        payload: state,
-        device: self.deviceNode.device,
-        config: entity?.config,
-        entity: entity
-      });
-    };
+      done();
+    });
 
     const onStatus = (status: string) => {
       self.current_status = status;
@@ -68,14 +72,10 @@ module.exports = (RED: NodeAPI) => {
       setStatus(Status[self.current_status as string]);
     };
 
-    self.onState = (state: any) => onState(state);
-    self.deviceNode.on('onState', self.onState);
-
     self.onStatus = (status: string) => onStatus(status);
     self.deviceNode.on('onStatus', self.onStatus);
 
     self.on('close', (_: any, done: () => any) => {
-      self.deviceNode.removeListener('onState', self.onState);
       self.deviceNode.removeListener('onStatus', self.onStatus);
       done();
     });

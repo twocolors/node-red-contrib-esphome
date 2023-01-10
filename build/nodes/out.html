@@ -1,18 +1,18 @@
 <script type="text/javascript">
-  RED.nodes.registerType('esphome-in', {
+  RED.nodes.registerType('esphome-out', {
     category: 'ESPhome',
-    paletteLabel: 'esphome in',
+    paletteLabel: 'esphome out',
     color: '#e0e0e0',
     defaults: {
       name: {},
       device: {value: '', type: 'esphome-device'},
       entity: {value: ''}
     },
-    outputs: 1,
+    inputs: 1,
     icon: 'esphome.svg',
-    align: 'left',
+    align: 'right',
     label: function () {
-      return this.name || 'ESPhome in';
+      return this.name || 'ESPhome out';
     },
     oneditprepare: function () {
       let node = this;
@@ -89,7 +89,7 @@
   });
 </script>
 
-<script type="text/html" data-template-name="esphome-in">
+<script type="text/html" data-template-name="esphome-out">
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-input-name" placeholder="Name" />
@@ -106,17 +106,11 @@
   </div>
 </script>
 
-<script type="text/html" data-help-name="esphome-in">
-  <p>Connects to a ESPhome and subscribes entity</p>
-  <h3>Outputs</h3>
+<script type="text/html" data-help-name="esphome-out">
+  <p>Connects to a ESPhome and publishes entity</p>
+  <h3>Inputs</h3>
   <dl class="message-properties">
     <dt class="required">payload<span class="property-type">object</span></dt>
-    <dd></dd>
-    <dt class="required">device<span class="property-type">object</span></dt>
-    <dd></dd>
-    <dt class="required">config<span class="property-type">object</span></dt>
-    <dd></dd>
-    <dt class="required">entity<span class="property-type">object</span></dt>
     <dd></dd>
   </dl>
 </script>

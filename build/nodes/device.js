@@ -11,6 +11,7 @@ module.exports = (RED) => {
         RED.nodes.createNode(this, config);
         self.device = {};
         self.entities = [];
+        self.current_status = 'disconnected';
         if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port) || !((_a = self.credentials) === null || _a === void 0 ? void 0 : _a.password)) {
             return;
         }
