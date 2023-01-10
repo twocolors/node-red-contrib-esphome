@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("../lib/utils");
+const util_1 = require("util");
 module.exports = (RED) => {
     RED.nodes.registerType('esphome-in', function (config) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -36,11 +37,18 @@ module.exports = (RED) => {
             if (state.key != config.entity) {
                 return;
             }
-            //setStatus({fill: 'yellow', shape: 'dot', text: state.state}, 3000);
+            delete state.key;
+            let data = typeof state.state !== 'undefined' && typeof state.state !== 'object' ? state.state : (0, util_1.inspect)(state);
+            if (data && data.length > 32) {
+                data = data.substr(0, 32) + '...';
+            }
+            setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
+            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({
                 payload: state,
-                payload_raw: state,
-                device: self.deviceNode.device
+                device: self.deviceNode.device,
+                config: entity === null || entity === void 0 ? void 0 : entity.config,
+                entity: entity
             });
         };
         const onStatus = (status) => {

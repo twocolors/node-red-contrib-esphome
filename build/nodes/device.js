@@ -83,8 +83,7 @@ module.exports = (RED) => {
             });
             entity.connection.subscribeStatesService();
             entity.on('state', (state) => {
-                // console.log({...self.entities.find((e: any) => e.key === state.key), ...state});
-                self.onState(Object.assign(Object.assign({}, self.entities.find((e) => e.key === state.key)), state));
+                self.onState(Object.assign({}, state));
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             entity.on('error', (e) => {

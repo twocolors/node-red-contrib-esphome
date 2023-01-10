@@ -1,5 +1,6 @@
 import {NodeAPI} from 'node-red';
 import {Status} from '../lib/utils';
+import {inspect} from 'util';
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType('esphome-in', function (this: any, config: any) {
@@ -41,9 +42,15 @@ module.exports = (RED: NodeAPI) => {
         return;
       }
 
-      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+      delete state.key;
 
-      setStatus({fill: 'yellow', shape: 'dot', text: 'data'}, 3000);
+      let data = typeof state.state !== 'undefined' && typeof state.state !== 'object' ? state.state : inspect(state);
+      if (data && data.length > 32) {
+        data = data.substr(0, 32) + '...';
+      }
+      setStatus({fill: 'yellow', shape: 'dot', text: data}, 3000);
+
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
       self.send({
         payload: state,
