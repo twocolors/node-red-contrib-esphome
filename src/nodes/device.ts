@@ -94,8 +94,7 @@ module.exports = (RED: NodeAPI) => {
         entity.connection.subscribeStatesService();
 
         entity.on('state', (state: any) => {
-          // console.log({...self.entities.find((e: any) => e.key === state.key), ...state});
-          self.onState({...self.entities.find((e: any) => e.key === state.key), ...state});
+          self.onState({...state});
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

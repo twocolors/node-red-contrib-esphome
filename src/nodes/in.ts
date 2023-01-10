@@ -41,12 +41,15 @@ module.exports = (RED: NodeAPI) => {
         return;
       }
 
-      //setStatus({fill: 'yellow', shape: 'dot', text: state.state}, 3000);
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+
+      setStatus({fill: 'yellow', shape: 'dot', text: 'data'}, 3000);
 
       self.send({
         payload: state,
-        payload_raw: state,
-        device: self.deviceNode.device
+        device: self.deviceNode.device,
+        config: entity?.config,
+        entity: entity
       });
     };
 
