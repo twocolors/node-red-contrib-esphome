@@ -16,6 +16,7 @@ module.exports = (RED) => {
             return;
         }
         self.onStatus = function (string) {
+            self.current_status = string;
             self.emit('onStatus', string);
         };
         self.onState = function (object) {

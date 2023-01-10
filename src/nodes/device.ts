@@ -21,6 +21,7 @@ module.exports = (RED: NodeAPI) => {
       }
 
       self.onStatus = function (string: string) {
+        self.current_status = string;
         self.emit('onStatus', string);
       };
 

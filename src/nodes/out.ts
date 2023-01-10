@@ -1,4 +1,4 @@
-import nodeRed, {NodeAPI} from 'node-red';
+import {NodeAPI} from 'node-red';
 import {Status} from '../lib/utils';
 import {inspect} from 'util';
 
