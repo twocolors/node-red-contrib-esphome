@@ -1,0 +1,49 @@
+{
+  "name": "node-red-contrib-esphome",
+  "version": "0.0.1",
+  "description": "Node-RED nodes to ESPhome devices.",
+  "homepage": "https://github.com/twocolors/node-red-contrib-esphome",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twocolors/node-red-contrib-esphome.git"
+  },
+  "bugs": {
+    "url": "https://github.com/twocolors/node-red-contrib-esphome/issues"
+  },
+  "author": "D",
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "npm run clean && npm run build",
+    "clean": "rm -rf build/lib build/**/*.js",
+    "eslint": "eslint \"src/**/*.ts\"",
+    "prettier": "prettier --write \"**/*.{js,ts}\""
+  },
+  "node-red": {
+    "version": ">=2.2.0",
+    "nodes": {
+      "api": "build/nodes/api.js",
+      "device": "build/nodes/device.js",
+      "in": "build/nodes/in.js"
+    }
+  },
+  "dependencies": {
+    "node-dns-sd":"^0.4.2",
+    "esphome-native-api":"twocolors/esphome-native-api#main"
+  },
+  "devDependencies": {
+    "@types/node":"^18.11.18",
+    "@types/node-red":"^1.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
+    "@typescript-eslint/parser": "^5.45.1",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-node": "^11.1.0",
+    "prettier": "^2.8.1",
+    "typescript": "^4.9.4"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

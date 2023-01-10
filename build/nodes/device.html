@@ -1,0 +1,147 @@
+<script type="text/javascript">
+  RED.nodes.registerType('esphome-device', {
+    category: 'config',
+    defaults: {
+      name: {},
+      host: {value: ''},
+      port: {value: 6053, validate: RED.validators.number()}
+    },
+    paletteLabel: 'device',
+    credentials: {
+      password: {type: 'password'}
+    },
+    label: function () {
+      return this.name || 'ESPhome';
+    },
+    oneditprepare: function () {
+      let node = this;
+
+      function toggleSelect() {
+        let $val = $('#node-config-input-host').val();
+        $('#node-config-input-discover').html(`<i class="fa fa-search"></i>`);
+        $('#node-config-input-host').off('change');
+        $('#node-config-input-host').replaceWith(
+          `<input type="text" id="node-config-input-host" style="width: 100%;">`
+        );
+        $('#node-config-input-host').val($val);
+      }
+
+      function toggleInput() {
+        let $val = $('#node-config-input-host').val();
+        let $password = $('#node-config-input-password').val();
+
+        RED.notify(`Discovery ESPhome devices ... (~5 sec)`);
+
+        $('#node-config-input-host').prop('disabled', true);
+        $.post('esphome/discovery')
+          .done(function (data) {
+            if (typeof data.message !== 'undefined') {
+              RED.notify(data.message, 'error');
+              $('#node-config-input-host').prop('disabled', false);
+              return;
+            }
+
+            if (data.length === 0) {
+              RED.notify(`No ESPhome devices found`, 'error');
+              $('#node-config-input-host').prop('disabled', false);
+              return;
+            }
+
+            $('#node-config-input-discover').html(`<i class="fa fa-i-cursor"></i>`);
+            $('#node-config-input-host').replaceWith(
+              `<select id="node-config-input-host" style="width: 100%;"></select>`
+            );
+            data.map(function (d) {
+              $('#node-config-input-host').append(
+                `<option value="${d.host}" data-host="${d.host}" data-port="${d.port}" data-fqdn="${d.fqdn}">${d.fqdn}</option>`
+              );
+            });
+
+            $('#node-config-input-host').on('change', changeHost);
+            if (!$val || data.length === 1) {
+              $val = data[0].host;
+            }
+
+            $('#node-config-input-host').val($val);
+            $('#node-config-input-host').prop('disabled', false);
+
+            if ($val) {
+              changeHost();
+            }
+          })
+          .fail(function (jqxhr, textStatus, error) {
+            RED.notify(`Request: ${textStatus}, ${error}`, 'error');
+          });
+      }
+
+      function changeHost() {
+        let $elm = $('#node-config-input-host option:selected');
+
+        $('#node-config-input-port').val($elm.data('port'));
+      }
+
+      $('#node-config-input-discover').click(function () {
+        if ($('#node-config-input-host').prop('tagName') === 'INPUT') {
+          toggleInput();
+        } else {
+          toggleSelect();
+        }
+      });
+    },
+    oneditsave: function () {
+      let $elm = $('#node-config-input-host option:selected');
+      if (!$('#node-config-input-name').val()) {
+        $('#node-config-input-name').val($elm.data('fqdn'));
+      }
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="esphome-device">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Name" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-config-input-host"><i class="fa fa-globe"></i> Host</label>
+    <div style="display: inline-block; position: relative; width: 70%; height: 24px;">
+      <div style="position: absolute; left: 0; right: 42px;">
+        <input type="text" id="node-config-input-host" style="width: 100%;" placeholder="Host" />
+      </div>
+      <a
+        id="node-config-input-discover"
+        class="editor-button"
+        style="position: absolute; right: 0; top: 0; width: 33px;"
+        ><i class="fa fa-search"></i
+      ></a>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="node-config-input-port"><i class="fa fa-sign-in"></i> Port</label>
+    <input type="text" id="node-config-input-port" placeholder="Port" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+    <input type="password" id="node-config-input-password" placeholder="Password" />
+  </div>
+
+  <div class="form-row">
+    <div class="form-tips"><b>Important:</b> deploy device node to get entities list</div>
+  </div>
+</script>
+
+<script type="text/html" data-help-name="esphome-device">
+  <p>Connection to ESPhome</p>
+  <h3>Configuration</h3>
+  <dl class="message-properties">
+    <dt class="required">Host<span class="property-type">string</span></dt>
+    <dd></dd>
+    <dt class="required">Port<span class="property-type">string</span></dt>
+    <dd></dd>
+    <dt class="required">Password<span class="property-type">password</span></dt>
+    <dd>Password for API ESPhome</dd>
+  </dl>
+</script>

@@ -1,0 +1,107 @@
+<script type="text/javascript">
+  RED.nodes.registerType('esphome-in', {
+    category: 'ESPhome',
+    paletteLabel: 'esphome in',
+    color: '#e0e0e0',
+    defaults: {
+      name: {},
+      device: {value: '', type: 'esphome-device'},
+      entity: {value: ''}
+    },
+    outputs: 1,
+    icon: 'esphome.svg',
+    align: 'left',
+    label: function () {
+      return this.name || 'esphome in';
+    },
+    oneditprepare: function () {
+      let node = this;
+
+      function selectEntity() {
+        let $device = $('#node-input-device').val();
+
+        if ($device && $device != '_ADD_') {
+          let $entity = node.entity || $('#node-input-entity').val();
+
+          $.post('esphome/entities', {
+            deviceNode: $device
+          })
+            .done(function (data) {
+              $('#node-input-entity').empty();
+
+              if (data.length === 0) {
+                $('#node-input-entity').val($entity).prop('disabled', true);
+                return;
+              }
+
+              let optgroup = '';
+              let htmlgroup = '';
+              data
+                .sort((a, b) => (a.type > b.type ? 1 : -1))
+                .map(function (d) {
+                  if (optgroup != d.type) {
+                    htmlgroup = $('<optgroup/>').attr('label', d.type);
+                    htmlgroup.appendTo('#node-input-entity');
+                    optgroup = d.type;
+                  }
+
+                  // TODO: join -> split ...
+                  let label = '';
+                  if (d.config.deviceClass || d.config.unitOfMeasurement) {
+                    label += '(';
+                    if (d.config.deviceClass) {
+                      label += d.config.deviceClass;
+                    }
+                    if (d.config.deviceClass && d.config.unitOfMeasurement) {
+                      label += ', ';
+                    }
+                    if (d.config.unitOfMeasurement) {
+                      label += d.config.unitOfMeasurement;
+                    }
+                    label += ')';
+                  }
+
+                  $(`<option data-name="${d.name}" >${d.name} ${label}</option>`)
+                    .attr('value', d.key)
+                    .appendTo(htmlgroup);
+                });
+
+              if (!$entity || data.length === 1) {
+                $entity = data[0].key;
+              }
+
+              $('#node-input-entity').val($entity).prop('disabled', false);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+              RED.notify(`Request: ${textStatus}, ${error}`, 'error');
+            });
+        }
+      }
+
+      $('#node-input-device').on('change', selectEntity);
+    },
+    oneditsave: function () {
+      let $elm = $('#node-input-entity option:selected');
+      if (!$('#node-input-name').val()) {
+        $('#node-input-name').val($elm.data('name'));
+      }
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="esphome-in">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-device"><i class="fa fa-tasks"></i> Device</label>
+    <input type="text" id="node-input-device" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-entity"><i class="fa fa-globe"></i> Entity</label>
+    <select id="node-input-entity" style="width: 70%;" disabled></select>
+  </div>
+</script>
