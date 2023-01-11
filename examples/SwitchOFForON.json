@@ -1,0 +1,103 @@
+[
+  {
+      "id": "b7697b0dca04ded6",
+      "type": "debug",
+      "z": "62b5c84b3cdd3fdb",
+      "name": "debug 1",
+      "active": true,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "true",
+      "targetType": "full",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 580,
+      "y": 200,
+      "wires": []
+  },
+  {
+      "id": "d6108e5ef72015c0",
+      "type": "esphome-in",
+      "z": "62b5c84b3cdd3fdb",
+      "name": "bathroom-fan Relay",
+      "device": "a99c14176d5869c6",
+      "entity": "3766617093",
+      "x": 350,
+      "y": 200,
+      "wires": [
+          [
+              "b7697b0dca04ded6"
+          ]
+      ]
+  },
+  {
+      "id": "44a4bcd8fd73e949",
+      "type": "esphome-out",
+      "z": "62b5c84b3cdd3fdb",
+      "name": "bathroom-fan Relay",
+      "device": "a99c14176d5869c6",
+      "entity": "3766617093",
+      "x": 620,
+      "y": 280,
+      "wires": []
+  },
+  {
+      "id": "07575f34d2bf2045",
+      "type": "inject",
+      "z": "62b5c84b3cdd3fdb",
+      "name": "",
+      "props": [
+          {
+              "p": "payload"
+          }
+      ],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "payload": "{\"state\":false}",
+      "payloadType": "json",
+      "x": 370,
+      "y": 280,
+      "wires": [
+          [
+              "44a4bcd8fd73e949"
+          ]
+      ]
+  },
+  {
+      "id": "0e8f890a9671b527",
+      "type": "inject",
+      "z": "62b5c84b3cdd3fdb",
+      "name": "",
+      "props": [
+          {
+              "p": "payload"
+          }
+      ],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "payload": "{\"state\":true}",
+      "payloadType": "json",
+      "x": 370,
+      "y": 340,
+      "wires": [
+          [
+              "44a4bcd8fd73e949"
+          ]
+      ]
+  },
+  {
+      "id": "a99c14176d5869c6",
+      "type": "esphome-device",
+      "name": "bathroom-fan.local",
+      "host": "192.168.0.111",
+      "port": "6053",
+      "credentials": {}
+  }
+]

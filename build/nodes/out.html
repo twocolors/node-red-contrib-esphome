@@ -21,16 +21,17 @@
         let $device = $('#node-input-device').val();
 
         if ($device && $device != '_ADD_') {
-          let $entity = node.entity || $('#node-input-entity').val();
+          let entity = $('#node-input-entity');
+          let $val = node.entity || entity.val();
 
           $.post('esphome/entities', {
             deviceNode: $device
           })
             .done(function (data) {
-              $('#node-input-entity').empty();
+              entity.empty();
 
               if (data.length === 0) {
-                $('#node-input-entity').val($entity).prop('disabled', true);
+                entity.val($val).prop('disabled', true);
                 return;
               }
 
@@ -61,16 +62,18 @@
                     label += ')';
                   }
 
-                  $(`<option data-name="${d.name}" >${d.name} ${label}</option>`)
+                  $('<option/>')
+                    .text(`${d.name} ${label}`)
+                    .data('name', d.name)
                     .attr('value', d.key)
                     .appendTo(htmlgroup);
                 });
 
-              if (!$entity || data.length === 1) {
-                $entity = data[0].key;
+              if (!$val || data.length === 1) {
+                $val = data[0].key;
               }
 
-              $('#node-input-entity').val($entity).prop('disabled', false);
+              entity.val($val).prop('disabled', false);
             })
             .fail(function (jqxhr, textStatus, error) {
               RED.notify(`Request: ${textStatus}, ${error}`, 'error');
@@ -111,6 +114,6 @@
   <h3>Inputs</h3>
   <dl class="message-properties">
     <dt class="required">payload<span class="property-type">object</span></dt>
-    <dd></dd>
+    <dd>state</dd>
   </dl>
 </script>
