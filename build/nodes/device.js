@@ -9,6 +9,7 @@ module.exports = (RED) => {
         const self = this;
         self.config = config;
         RED.nodes.createNode(this, config);
+        self.setMaxListeners(0);
         self.device = {};
         self.entities = [];
         self.current_status = 'disconnected';
