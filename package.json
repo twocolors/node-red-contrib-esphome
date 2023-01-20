@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/twocolors/node-red-contrib-esphome.git"
+    "url": "git+https://github.com/twocolors/node-red-contrib-esphome.git"
   },
   "bugs": {
     "url": "https://github.com/twocolors/node-red-contrib-esphome/issues"
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "node-dns-sd":"^0.4.2",
-    "esphome-native-api":"twocolors/esphome-native-api#main"
+    "esphome-native-api":"git+https://github.com/twocolors/esphome-native-api.git"
   },
   "devDependencies": {
     "@types/node":"^18.11.18",
