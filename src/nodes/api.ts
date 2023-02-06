@@ -1,12 +1,13 @@
 import {NodeAPI} from 'node-red';
 import express from 'express';
-import {discovery} from '../lib/utils';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {Discovery} = require('esphome-native-api');
 
 module.exports = (RED: NodeAPI) => {
   const NODE_PATH = '/esphome/';
 
   RED.httpAdmin.post(NODE_PATH + 'discovery', async (req: express.Request, res: express.Response) => {
-    discovery()
+    Discovery()
       .then((devices: Array<object>) => {
         res.json(devices);
       })

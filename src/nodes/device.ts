@@ -57,7 +57,7 @@ module.exports = (RED: NodeAPI) => {
           self.error(e.message);
         } else if (e.message.includes('ECONNRESET')) {
           /* empty */
-        } else if (e.message.includes('timeout')) {
+        } else if (e.message.includes('TIMEOUT')) {
           /* empty */
         } else if (e.message.includes('write after end')) {
           /* empty */

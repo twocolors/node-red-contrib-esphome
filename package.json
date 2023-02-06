@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-esphome",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Node-RED nodes to ESPhome devices.",
   "homepage": "https://github.com/twocolors/node-red-contrib-esphome",
   "license": "MIT",
@@ -29,7 +29,6 @@
     }
   },
   "dependencies": {
-    "node-dns-sd":"^0.4.2",
     "esphome-native-api":"git+https://github.com/twocolors/esphome-native-api.git"
   },
   "devDependencies": {

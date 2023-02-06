@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const utils_1 = require("../lib/utils");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { Discovery } = require('esphome-native-api');
 module.exports = (RED) => {
     const NODE_PATH = '/esphome/';
     RED.httpAdmin.post(NODE_PATH + 'discovery', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        (0, utils_1.discovery)()
+        Discovery()
             .then((devices) => {
             res.json(devices);
         })

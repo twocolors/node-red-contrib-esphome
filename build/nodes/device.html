@@ -51,9 +51,9 @@
             $('#node-config-input-host').replaceWith(
               `<select id="node-config-input-host" style="width: 100%;"></select>`
             );
-            data.map(function (d) {
+            data.sort((a, b) => (a.host > b.host ? 1 : -1)).map(function (d) {
               $('#node-config-input-host').append(
-                `<option value="${d.host}" data-host="${d.host}" data-port="${d.port}" data-fqdn="${d.fqdn}">${d.fqdn}</option>`
+                `<option value="${d.address}" data-host="${d.address}" data-port="${d.port}" data-fqdn="${d.host}">${d.host} (${d.board})</option>`
               );
             });
 

@@ -52,7 +52,7 @@ module.exports = (RED) => {
             else if (e.message.includes('ECONNRESET')) {
                 /* empty */
             }
-            else if (e.message.includes('timeout')) {
+            else if (e.message.includes('TIMEOUT')) {
                 /* empty */
             }
             else if (e.message.includes('write after end')) {
