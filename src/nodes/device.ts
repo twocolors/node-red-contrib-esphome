@@ -1,6 +1,6 @@
 import {NodeAPI} from 'node-red';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const {Client} = require('esphome-native-api');
+const {Client} = require('@2colors/esphome-native-api');
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType(

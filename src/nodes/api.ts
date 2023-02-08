@@ -1,7 +1,7 @@
 import {NodeAPI} from 'node-red';
 import express from 'express';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const {Discovery} = require('esphome-native-api');
+const {Discovery} = require('@2colors/esphome-native-api');
 
 module.exports = (RED: NodeAPI) => {
   const NODE_PATH = '/esphome/';
