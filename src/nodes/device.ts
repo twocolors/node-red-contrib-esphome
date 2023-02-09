@@ -1,6 +1,8 @@
 import {NodeAPI} from 'node-red';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {Client} = require('@2colors/esphome-native-api');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Package = require('../../package.json');
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType(
@@ -34,10 +36,10 @@ module.exports = (RED: NodeAPI) => {
         host: config.host,
         port: config.port,
         password: self.credentials.password,
-        clientInfo: 'node-red',
+        clientInfo: Package.name + ' ' + Package.version,
         initializeDeviceInfo: true,
         initializeListEntities: true,
-        initializeSubscribeStates: false,
+        initializeSubscribeStates: true,
         reconnect: true,
         reconnectInterval: 15 * 1000,
         pingInterval: 5 * 1000
@@ -93,8 +95,6 @@ module.exports = (RED: NodeAPI) => {
           name: entity.name,
           config: entity.config
         });
-
-        entity.connection.subscribeStatesService();
 
         entity.on('state', (state: any) => {
           self.onState({...state});

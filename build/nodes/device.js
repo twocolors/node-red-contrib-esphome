@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Client } = require('@2colors/esphome-native-api');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Package = require('../../package.json');
 module.exports = (RED) => {
     RED.nodes.registerType('esphome-device', function (config) {
         var _a;
@@ -27,16 +29,17 @@ module.exports = (RED) => {
             host: config.host,
             port: config.port,
             password: self.credentials.password,
-            clientInfo: 'node-red',
+            clientInfo: Package.name + ' ' + Package.version,
             initializeDeviceInfo: true,
             initializeListEntities: true,
-            initializeSubscribeStates: false,
+            initializeSubscribeStates: true,
             reconnect: true,
             reconnectInterval: 15 * 1000,
             pingInterval: 5 * 1000
         });
         try {
             self.client.connect();
+            // self.client.connection.subscribeStatesService();
         }
         catch (e) {
             self.error(e.message);
@@ -84,7 +87,6 @@ module.exports = (RED) => {
                 name: entity.name,
                 config: entity.config
             });
-            entity.connection.subscribeStatesService();
             entity.on('state', (state) => {
                 self.onState(Object.assign({}, state));
             });
