@@ -39,7 +39,6 @@ module.exports = (RED) => {
         });
         try {
             self.client.connect();
-            // self.client.connection.subscribeStatesService();
         }
         catch (e) {
             self.error(e.message);
