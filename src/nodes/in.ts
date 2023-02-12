@@ -40,22 +40,25 @@ module.exports = (RED: NodeAPI) => {
     };
 
     const onState = (state: any) => {
-      if (state.key != config.entity) {
+      const payload: any = {...state};
+
+      if (payload.key != config.entity) {
         return;
       }
 
-      delete state.key;
+      delete payload.key;
 
-      let data = typeof state.state !== 'undefined' && typeof state.state !== 'object' ? state.state : inspect(state);
-      if (data && data.length > 32) {
-        data = data.substr(0, 32) + '...';
+      let text =
+        typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : inspect(payload);
+      if (text && text.length > 32) {
+        text = text.substr(0, 32) + '...';
       }
-      setStatus({fill: 'yellow', shape: 'dot', text: data}, 3000);
+      setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
 
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
       self.send({
-        payload: state,
+        payload: payload,
         device: self.deviceNode.device,
         config: entity?.config,
         entity: entity

@@ -35,18 +35,19 @@ module.exports = (RED) => {
             }
         };
         const onState = (state) => {
-            if (state.key != config.entity) {
+            const payload = Object.assign({}, state);
+            if (payload.key != config.entity) {
                 return;
             }
-            delete state.key;
-            let data = typeof state.state !== 'undefined' && typeof state.state !== 'object' ? state.state : (0, util_1.inspect)(state);
-            if (data && data.length > 32) {
-                data = data.substr(0, 32) + '...';
+            delete payload.key;
+            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : (0, util_1.inspect)(payload);
+            if (text && text.length > 32) {
+                text = text.substr(0, 32) + '...';
             }
-            setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
+            setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({
-                payload: state,
+                payload: payload,
                 device: self.deviceNode.device,
                 config: entity === null || entity === void 0 ? void 0 : entity.config,
                 entity: entity
