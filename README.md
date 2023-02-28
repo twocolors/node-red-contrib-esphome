@@ -1,6 +1,6 @@
 # node-red-contrib-esphome
 
-[![platform](https://img.shields.io/badge/platform-Node--RED-red?logo=nodered)](https://nodered.org)
+[![platform](https://img.shields.io/badge/platform-Node--RED-red?logo=nodered)](https://flows.nodered.org/node/node-red-contrib-esphome)
 [![Min Node Version](https://img.shields.io/node/v/node-red-contrib-esphome.svg)](https://nodejs.org/en/)
 [![GitHub version](https://img.shields.io/github/package-json/v/twocolors/node-red-contrib-esphome?logo=npm)](https://www.npmjs.com/package/node-red-contrib-esphome)
 [![GitHub stars](https://img.shields.io/github/stars/twocolors/node-red-contrib-esphome)](https://github.com/twocolors/node-red-contrib-esphome/stargazers)
