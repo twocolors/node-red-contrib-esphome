@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "@2colors/esphome-native-api":"1.0.8"
+    "@2colors/esphome-native-api":"1.0.9"
   },
   "devDependencies": {
     "@types/node":"^18.11.18",
