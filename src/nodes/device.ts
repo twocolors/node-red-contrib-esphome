@@ -47,6 +47,7 @@ module.exports = (RED: NodeAPI) => {
 
       try {
         self.client.connect();
+        self.client.connection.setMaxListeners(0);
       } catch (e: any) {
         self.error(e.message);
         return;
