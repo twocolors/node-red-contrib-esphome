@@ -35,10 +35,11 @@ module.exports = (RED) => {
             initializeSubscribeStates: true,
             reconnect: true,
             reconnectInterval: 15 * 1000,
-            pingInterval: 5 * 1000
+            pingInterval: 15 * 1000
         });
         try {
             self.client.connect();
+            self.client.connection.setMaxListeners(0);
         }
         catch (e) {
             self.error(e.message);
@@ -49,7 +50,7 @@ module.exports = (RED) => {
                 /* empty */
             }
             else if (e.message.includes('Invalid password')) {
-                self.error(e.message);
+                /* empty */
             }
             else if (e.message.includes('ECONNRESET')) {
                 /* empty */
@@ -63,6 +64,7 @@ module.exports = (RED) => {
             else {
                 // copy this error to issues ...
             }
+            self.error(e.message);
             self.onStatus('error');
         });
         self.client.on('disconnected', () => {
