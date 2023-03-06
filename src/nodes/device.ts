@@ -42,7 +42,7 @@ module.exports = (RED: NodeAPI) => {
         initializeSubscribeStates: true,
         reconnect: true,
         reconnectInterval: 15 * 1000,
-        pingInterval: 5 * 1000
+        pingInterval: 15 * 1000
       });
 
       try {
@@ -57,7 +57,7 @@ module.exports = (RED: NodeAPI) => {
         if (e.message.includes('EHOSTUNREACH')) {
           /* empty */
         } else if (e.message.includes('Invalid password')) {
-          self.error(e.message);
+          /* empty */
         } else if (e.message.includes('ECONNRESET')) {
           /* empty */
         } else if (e.message.includes('TIMEOUT')) {
@@ -67,6 +67,7 @@ module.exports = (RED: NodeAPI) => {
         } else {
           // copy this error to issues ...
         }
+        self.error(e.message);
         self.onStatus('error');
       });
 
