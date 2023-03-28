@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Status = void 0;
+exports.LogLevel = exports.Status = void 0;
 exports.Status = {
     error: {
         fill: 'red',
@@ -22,5 +22,15 @@ exports.Status = {
         shape: 'dot',
         text: 'connected'
     }
+};
+exports.LogLevel = {
+    0: 'NONE',
+    1: 'ERROR',
+    2: 'WARN',
+    3: 'INFO',
+    4: 'CONFIG',
+    5: 'DEBUG',
+    6: 'VERBOSE',
+    7: 'VERY_VERBOSE'
 };
 //# sourceMappingURL=utils.js.map

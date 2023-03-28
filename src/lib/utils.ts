@@ -20,3 +20,14 @@ export const Status: {[key: string]: any} = {
     text: 'connected'
   }
 } as const;
+
+export const LogLevel: {[key: number]: string} = {
+  0: 'NONE',
+  1: 'ERROR',
+  2: 'WARN',
+  3: 'INFO',
+  4: 'CONFIG',
+  5: 'DEBUG',
+  6: 'VERBOSE',
+  7: 'VERY_VERBOSE'
+} as const;

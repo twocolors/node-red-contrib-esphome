@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const { Client } = require('@2colors/esphome-native-api');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Package = require('../../package.json');
+const utils_1 = require("../lib/utils");
 module.exports = (RED) => {
     RED.nodes.registerType('esphome-device', function (config) {
-        var _a;
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         self.config = config;
@@ -15,7 +15,7 @@ module.exports = (RED) => {
         self.device = {};
         self.entities = [];
         self.current_status = 'disconnected';
-        if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port) || !((_a = self.credentials) === null || _a === void 0 ? void 0 : _a.password)) {
+        if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port)) {
             return;
         }
         self.onStatus = function (string) {
@@ -35,7 +35,11 @@ module.exports = (RED) => {
             initializeSubscribeStates: true,
             reconnect: true,
             reconnectInterval: 15 * 1000,
-            pingInterval: 15 * 1000
+            pingInterval: 15 * 1000,
+            initializeSubscribeLogs: {
+                level: config.loglevel,
+                dumpConfig: config.logdump
+            }
         });
         try {
             self.client.connect();
@@ -73,6 +77,16 @@ module.exports = (RED) => {
         self.client.on('connected', () => {
             // clear entities
             self.entities = [];
+            // logs to entities
+            if (config.loglevel > 0) {
+                const key = 'logs-' + config.loglevel;
+                self.entities.push({
+                    key: key,
+                    type: 'Systems',
+                    name: 'Logs',
+                    config: { deviceClass: utils_1.LogLevel[config.loglevel] }
+                });
+            }
             self.onStatus('connecting');
         });
         self.client.on('initialized', () => {
@@ -96,6 +110,12 @@ module.exports = (RED) => {
                 /* empty */
             });
         });
+        if (config.loglevel > 0) {
+            const key = 'logs-' + config.loglevel;
+            self.client.on('logs', (payload) => {
+                self.onState(Object.assign({ key: key }, payload));
+            });
+        }
         self.on('close', () => {
             self.client.disconnect();
         });

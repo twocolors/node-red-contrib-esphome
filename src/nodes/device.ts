@@ -3,6 +3,7 @@ import {NodeAPI} from 'node-red';
 const {Client} = require('@2colors/esphome-native-api');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Package = require('../../package.json');
+import {LogLevel} from '../lib/utils';
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType(
@@ -19,7 +20,7 @@ module.exports = (RED: NodeAPI) => {
       self.entities = [];
       self.current_status = 'disconnected';
 
-      if (!config?.host || !config?.port || !self.credentials?.password) {
+      if (!config?.host || !config?.port) {
         return;
       }
 
@@ -42,7 +43,11 @@ module.exports = (RED: NodeAPI) => {
         initializeSubscribeStates: true,
         reconnect: true,
         reconnectInterval: 15 * 1000,
-        pingInterval: 15 * 1000
+        pingInterval: 15 * 1000,
+        initializeSubscribeLogs: {
+          level: config.loglevel,
+          dumpConfig: config.logdump
+        }
       });
 
       try {
@@ -78,6 +83,17 @@ module.exports = (RED: NodeAPI) => {
       self.client.on('connected', () => {
         // clear entities
         self.entities = [];
+        // logs to entities
+        if (config.loglevel > 0) {
+          const key = 'logs-' + config.loglevel;
+
+          self.entities.push({
+            key: key,
+            type: 'Systems',
+            name: 'Logs',
+            config: {deviceClass: LogLevel[config.loglevel]}
+          });
+        }
 
         self.onStatus('connecting');
       });
@@ -107,6 +123,14 @@ module.exports = (RED: NodeAPI) => {
           /* empty */
         });
       });
+
+      if (config.loglevel > 0) {
+        const key = 'logs-' + config.loglevel;
+
+        self.client.on('logs', (payload: any) => {
+          self.onState({key: key, ...payload});
+        });
+      }
 
       self.on('close', () => {
         self.client.disconnect();
