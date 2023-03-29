@@ -19,9 +19,16 @@ module.exports = (RED: NodeAPI) => {
       self.device = {};
       self.entities = [];
       self.current_status = 'disconnected';
+      self.log_enable = false;
 
       if (!config?.host || !config?.port) {
         return;
+      }
+
+      // logs
+      if (config?.loglevel > 0) {
+        self.log_enable = true;
+        self.log_key = 'logs-' + config.loglevel;
       }
 
       self.onStatus = function (string: string) {
@@ -33,7 +40,7 @@ module.exports = (RED: NodeAPI) => {
         self.emit('onState', object);
       };
 
-      self.client = new Client({
+      let options: any = {
         host: config.host,
         port: config.port,
         password: self.credentials.password,
@@ -43,12 +50,20 @@ module.exports = (RED: NodeAPI) => {
         initializeSubscribeStates: true,
         reconnect: true,
         reconnectInterval: 15 * 1000,
-        pingInterval: 15 * 1000,
-        initializeSubscribeLogs: {
-          level: config.loglevel,
-          dumpConfig: config.logdump
-        }
-      });
+        pingInterval: 15 * 1000
+      };
+
+      if (this.log_enable) {
+        options = {
+          ...options,
+          initializeSubscribeLogs: {
+            level: config.loglevel,
+            dumpConfig: config.logdump
+          }
+        };
+      }
+
+      self.client = new Client(options);
 
       try {
         self.client.connect();
@@ -84,14 +99,14 @@ module.exports = (RED: NodeAPI) => {
         // clear entities
         self.entities = [];
         // logs to entities
-        if (config.loglevel > 0) {
-          const key = 'logs-' + config.loglevel;
-
+        if (this.log_enable) {
           self.entities.push({
-            key: key,
+            key: this.log_key,
             type: 'Systems',
             name: 'Logs',
-            config: {deviceClass: LogLevel[config.loglevel]}
+            config: {
+              deviceClass: LogLevel[config.loglevel]
+            }
           });
         }
 
@@ -124,11 +139,9 @@ module.exports = (RED: NodeAPI) => {
         });
       });
 
-      if (config.loglevel > 0) {
-        const key = 'logs-' + config.loglevel;
-
+      if (this.log_enable) {
         self.client.on('logs', (payload: any) => {
-          self.onState({key: key, ...payload});
+          self.onState({key: this.log_key, ...payload});
         });
       }
 

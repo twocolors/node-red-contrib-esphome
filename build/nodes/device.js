@@ -15,8 +15,14 @@ module.exports = (RED) => {
         self.device = {};
         self.entities = [];
         self.current_status = 'disconnected';
+        self.log_enable = false;
         if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port)) {
             return;
+        }
+        // logs
+        if ((config === null || config === void 0 ? void 0 : config.loglevel) > 0) {
+            self.log_enable = true;
+            self.log_key = 'logs-' + config.loglevel;
         }
         self.onStatus = function (string) {
             self.current_status = string;
@@ -25,7 +31,7 @@ module.exports = (RED) => {
         self.onState = function (object) {
             self.emit('onState', object);
         };
-        self.client = new Client({
+        let options = {
             host: config.host,
             port: config.port,
             password: self.credentials.password,
@@ -35,12 +41,15 @@ module.exports = (RED) => {
             initializeSubscribeStates: true,
             reconnect: true,
             reconnectInterval: 15 * 1000,
-            pingInterval: 15 * 1000,
-            initializeSubscribeLogs: {
-                level: config.loglevel,
-                dumpConfig: config.logdump
-            }
-        });
+            pingInterval: 15 * 1000
+        };
+        if (this.log_enable) {
+            options = Object.assign(Object.assign({}, options), { initializeSubscribeLogs: {
+                    level: config.loglevel,
+                    dumpConfig: config.logdump
+                } });
+        }
+        self.client = new Client(options);
         try {
             self.client.connect();
             self.client.connection.setMaxListeners(0);
@@ -78,13 +87,14 @@ module.exports = (RED) => {
             // clear entities
             self.entities = [];
             // logs to entities
-            if (config.loglevel > 0) {
-                const key = 'logs-' + config.loglevel;
+            if (this.log_enable) {
                 self.entities.push({
-                    key: key,
+                    key: this.log_key,
                     type: 'Systems',
                     name: 'Logs',
-                    config: { deviceClass: utils_1.LogLevel[config.loglevel] }
+                    config: {
+                        deviceClass: utils_1.LogLevel[config.loglevel]
+                    }
                 });
             }
             self.onStatus('connecting');
@@ -110,10 +120,9 @@ module.exports = (RED) => {
                 /* empty */
             });
         });
-        if (config.loglevel > 0) {
-            const key = 'logs-' + config.loglevel;
+        if (this.log_enable) {
             self.client.on('logs', (payload) => {
-                self.onState(Object.assign({ key: key }, payload));
+                self.onState(Object.assign({ key: this.log_key }, payload));
             });
         }
         self.on('close', () => {
