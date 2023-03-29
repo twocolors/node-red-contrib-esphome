@@ -21,6 +21,9 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
+#### 0.1.1
+  - fix logs
+
 #### 0.1.0
   - support logs in node
   - allow empty password

@@ -19,16 +19,10 @@ module.exports = (RED: NodeAPI) => {
       self.device = {};
       self.entities = [];
       self.current_status = 'disconnected';
-      self.log_enable = false;
+      self.logger = parseInt(config?.loglevel);
 
       if (!config?.host || !config?.port) {
         return;
-      }
-
-      // logs
-      if (config?.loglevel > 0) {
-        self.log_enable = true;
-        self.log_key = 'logs-' + config.loglevel;
       }
 
       self.onStatus = function (string: string) {
@@ -53,7 +47,7 @@ module.exports = (RED: NodeAPI) => {
         pingInterval: 15 * 1000
       };
 
-      if (this.log_enable) {
+      if (this.logger) {
         options = {
           ...options,
           initializeSubscribeLogs: {
@@ -99,9 +93,9 @@ module.exports = (RED: NodeAPI) => {
         // clear entities
         self.entities = [];
         // logs to entities
-        if (this.log_enable) {
+        if (this.logger) {
           self.entities.push({
-            key: this.log_key,
+            key: 'logs',
             type: 'Systems',
             name: 'Logs',
             config: {
@@ -139,11 +133,10 @@ module.exports = (RED: NodeAPI) => {
         });
       });
 
-      if (this.log_enable) {
-        self.client.on('logs', (payload: any) => {
-          self.onState({key: this.log_key, ...payload});
-        });
-      }
+      // logs
+      self.client.on('logs', (payload: any) => {
+        self.onState({key: 'logs', ...payload});
+      });
 
       self.on('close', () => {
         self.client.disconnect();

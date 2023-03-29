@@ -15,14 +15,9 @@ module.exports = (RED) => {
         self.device = {};
         self.entities = [];
         self.current_status = 'disconnected';
-        self.log_enable = false;
+        self.logger = parseInt(config === null || config === void 0 ? void 0 : config.loglevel);
         if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port)) {
             return;
-        }
-        // logs
-        if ((config === null || config === void 0 ? void 0 : config.loglevel) > 0) {
-            self.log_enable = true;
-            self.log_key = 'logs-' + config.loglevel;
         }
         self.onStatus = function (string) {
             self.current_status = string;
@@ -43,7 +38,7 @@ module.exports = (RED) => {
             reconnectInterval: 15 * 1000,
             pingInterval: 15 * 1000
         };
-        if (this.log_enable) {
+        if (this.logger) {
             options = Object.assign(Object.assign({}, options), { initializeSubscribeLogs: {
                     level: config.loglevel,
                     dumpConfig: config.logdump
@@ -87,9 +82,9 @@ module.exports = (RED) => {
             // clear entities
             self.entities = [];
             // logs to entities
-            if (this.log_enable) {
+            if (this.logger) {
                 self.entities.push({
-                    key: this.log_key,
+                    key: 'logs',
                     type: 'Systems',
                     name: 'Logs',
                     config: {
@@ -120,11 +115,10 @@ module.exports = (RED) => {
                 /* empty */
             });
         });
-        if (this.log_enable) {
-            self.client.on('logs', (payload) => {
-                self.onState(Object.assign({ key: this.log_key }, payload));
-            });
-        }
+        // logs
+        self.client.on('logs', (payload) => {
+            self.onState(Object.assign({ key: 'logs' }, payload));
+        });
         self.on('close', () => {
             self.client.disconnect();
         });

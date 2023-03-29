@@ -1,43 +1,39 @@
 [
   {
-      "id": "1c76c8513b203f0a",
-      "type": "esphome-in",
-      "z": "9b21668c2e9037fd",
-      "name": "Logs",
-      "device": "343b306e8ebb837a",
-      "entity": "logs-5",
-      "x": 370,
-      "y": 280,
-      "wires": [
-          [
-              "afe0128514d75dff"
-          ]
-      ]
+    "id": "d94696f33daa480b",
+    "type": "esphome-in",
+    "z": "3c118d78f5082224",
+    "name": "Logs",
+    "device": "ecc01306bd6fee0f",
+    "entity": "logs",
+    "x": 150,
+    "y": 200,
+    "wires": [["aa741845138e30ca"]]
   },
   {
-      "id": "afe0128514d75dff",
-      "type": "debug",
-      "z": "9b21668c2e9037fd",
-      "name": "debug 1",
-      "active": true,
-      "tosidebar": true,
-      "console": true,
-      "tostatus": false,
-      "complete": "payload",
-      "targetType": "msg",
-      "statusVal": "",
-      "statusType": "auto",
-      "x": 530,
-      "y": 280,
-      "wires": []
+    "id": "aa741845138e30ca",
+    "type": "debug",
+    "z": "3c118d78f5082224",
+    "name": "Logs",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 300,
+    "y": 200,
+    "wires": []
   },
   {
-      "id": "343b306e8ebb837a",
-      "type": "esphome-device",
-      "name": "esp32-test.local",
-      "host": "192.168.0.209",
-      "port": "6053",
-      "loglevel": "5",
-      "logdump": true
+    "id": "ecc01306bd6fee0f",
+    "type": "esphome-device",
+    "name": "esp32-test.local",
+    "host": "192.168.0.209",
+    "port": "6053",
+    "loglevel": "5",
+    "logdump": true
   }
 ]
