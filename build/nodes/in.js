@@ -18,6 +18,8 @@ module.exports = (RED) => {
             return;
         }
         self.current_status = self.deviceNode.current_status;
+        self.ble_address = self.config.ble_address;
+        self.ble_bindkey = self.config.ble_bindkey;
         const clearStatus = (timeout = 0) => {
             setTimeout(() => {
                 if (self.current_status) {
@@ -36,7 +38,7 @@ module.exports = (RED) => {
         };
         const onState = (state) => {
             const payload = Object.assign({}, state);
-            if (payload.key != config.entity) {
+            if (payload.key != self.config.entity) {
                 return;
             }
             delete payload.key;
@@ -53,16 +55,37 @@ module.exports = (RED) => {
                 entity: entity
             });
         };
+        const onBle = (data) => {
+            let address = self.ble_address;
+            const payload = Object.assign({}, data);
+            address = address.replace(/[^A-fa-f0-9]/g, '').toLowerCase();
+            payload.address = payload.address.toString(16);
+            if (address != payload.address) {
+                return;
+            }
+            delete payload.key;
+            setStatus({ fill: 'blue', shape: 'dot', text: 'ble' }, 3000);
+            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
+            self.send({
+                payload: payload,
+                device: self.deviceNode.device,
+                config: entity === null || entity === void 0 ? void 0 : entity.config,
+                entity: entity
+            });
+        };
         const onStatus = (status) => {
             self.current_status = status;
             setStatus(utils_1.Status[self.current_status]);
         };
         self.onState = (state) => onState(state);
         self.deviceNode.on('onState', self.onState);
+        self.onBle = (data) => onBle(data);
+        self.deviceNode.on('onBle', self.onBle);
         self.onStatus = (status) => onStatus(status);
         self.deviceNode.on('onStatus', self.onStatus);
         self.on('close', (_, done) => {
             self.deviceNode.removeListener('onState', self.onState);
+            self.deviceNode.removeListener('onBle', self.onBle);
             self.deviceNode.removeListener('onStatus', self.onStatus);
             done();
         });

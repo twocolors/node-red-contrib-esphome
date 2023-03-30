@@ -19,9 +19,10 @@ module.exports = (RED: NodeAPI) => {
       self.device = {};
       self.entities = [];
       self.current_status = 'disconnected';
-      self.logger = parseInt(config?.loglevel);
+      self.logger = parseInt(self.config?.loglevel);
+      self.ble = Boolean(self.config?.ble);
 
-      if (!config?.host || !config?.port) {
+      if (!self.config?.host || !self.config?.port) {
         return;
       }
 
@@ -34,9 +35,13 @@ module.exports = (RED: NodeAPI) => {
         self.emit('onState', object);
       };
 
+      self.onBle = function (object: any) {
+        self.emit('onBle', object);
+      };
+
       let options: any = {
-        host: config.host,
-        port: config.port,
+        host: self.config.host,
+        port: self.config.port,
         password: self.credentials.password,
         clientInfo: Package.name + ' ' + Package.version,
         initializeDeviceInfo: true,
@@ -44,15 +49,16 @@ module.exports = (RED: NodeAPI) => {
         initializeSubscribeStates: true,
         reconnect: true,
         reconnectInterval: 15 * 1000,
-        pingInterval: 15 * 1000
+        pingInterval: 15 * 1000,
+        initializeSubscribeBLEAdvertisements: self.ble
       };
 
-      if (this.logger) {
+      if (self.logger) {
         options = {
           ...options,
           initializeSubscribeLogs: {
-            level: config.loglevel,
-            dumpConfig: config.logdump
+            level: self.config.loglevel,
+            dumpConfig: self.config.logdump
           }
         };
       }
@@ -93,14 +99,22 @@ module.exports = (RED: NodeAPI) => {
         // clear entities
         self.entities = [];
         // logs to entities
-        if (this.logger) {
+        if (self.logger) {
           self.entities.push({
             key: 'logs',
             type: 'Systems',
             name: 'Logs',
             config: {
-              deviceClass: LogLevel[config.loglevel]
+              deviceClass: LogLevel[self.config.loglevel]
             }
+          });
+        }
+        // ble to entities
+        if (self.ble) {
+          self.entities.push({
+            key: 'ble',
+            type: 'Systems',
+            name: 'BLE'
           });
         }
 
@@ -136,6 +150,11 @@ module.exports = (RED: NodeAPI) => {
       // logs
       self.client.on('logs', (payload: any) => {
         self.onState({key: 'logs', ...payload});
+      });
+
+      // ble
+      self.client.on('ble', (payload: any) => {
+        self.onBle({key: 'ble', ...payload});
       });
 
       self.on('close', () => {

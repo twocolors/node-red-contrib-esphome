@@ -44,9 +44,9 @@ module.exports = (RED) => {
             }
         };
         self.on('input', (msg, send, done) => __awaiter(this, void 0, void 0, function* () {
-            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
+            const entity = self.deviceNode.entities.find((e) => e.key == self.config.entity);
             const command = entity.type.toLowerCase() + 'CommandService';
-            const regexp = /^(BinarySensor|Sensor|TextSensor)$/gi;
+            const regexp = /^(BinarySensor|Sensor|TextSensor|Systems)$/gi;
             if (entity.type.match(regexp)) {
                 done();
                 return;
@@ -58,7 +58,7 @@ module.exports = (RED) => {
             }
             setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
             try {
-                yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, msg.payload));
+                yield self.deviceNode.client.connection[command](Object.assign({ key: self.config.entity }, msg.payload));
             }
             catch (e) {
                 setStatus(utils_1.Status['error'], 3000);

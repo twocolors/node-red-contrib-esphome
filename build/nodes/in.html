@@ -6,7 +6,9 @@
     defaults: {
       name: {},
       device: {value: '', type: 'esphome-device'},
-      entity: {value: ''}
+      entity: {value: ''},
+      ble_address: {value: ''},
+      ble_bindkey: {value: ''}
     },
     outputs: 1,
     icon: 'esphome.svg',
@@ -22,7 +24,7 @@
 
         if ($device && $device != '_ADD_') {
           let entity = $('#node-input-entity');
-          let $val = node.entity || entity.val();
+          let $val = entity.val() || node.entity;
 
           $.post('esphome/entities', {
             deviceNode: $device
@@ -48,18 +50,20 @@
 
                   // TODO: join -> split ...
                   let label = '';
-                  if (d.config.deviceClass || d.config.unitOfMeasurement) {
-                    label += '(';
-                    if (d.config.deviceClass) {
-                      label += d.config.deviceClass;
+                  if (d.config) {
+                    if (d.config.deviceClass || d.config.unitOfMeasurement) {
+                      label += '(';
+                      if (d.config.deviceClass) {
+                        label += d.config.deviceClass;
+                      }
+                      if (d.config.deviceClass && d.config.unitOfMeasurement) {
+                        label += ', ';
+                      }
+                      if (d.config.unitOfMeasurement) {
+                        label += d.config.unitOfMeasurement;
+                      }
+                      label += ')';
                     }
-                    if (d.config.deviceClass && d.config.unitOfMeasurement) {
-                      label += ', ';
-                    }
-                    if (d.config.unitOfMeasurement) {
-                      label += d.config.unitOfMeasurement;
-                    }
-                    label += ')';
                   }
 
                   $('<option/>')
@@ -82,6 +86,14 @@
       }
 
       $('#node-input-device').on('change', selectEntity);
+      $('#node-input-entity').on('change', function() {
+        let $val = $(this).val() || node.entity;
+        if ($val == 'ble') {
+          $('#ble-show').show();
+        } else {
+          $('#ble-show').hide();
+        }
+      });
     },
     oneditsave: function () {
       let $elm = $('#node-input-entity option:selected');
@@ -106,6 +118,18 @@
   <div class="form-row">
     <label for="node-input-entity"><i class="fa fa-globe"></i> Entity</label>
     <select id="node-input-entity" style="width: 70%;" disabled></select>
+  </div>
+
+  <div id="ble-show" style="display: none;">
+    <div class="form-row">
+      <label for="node-input-ble_address"><i class="fa fa-bluetooth"></i> Address</label>
+      <input type="text" id="node-input-ble_address" placeholder="00:AB:CD:EF:11:22" />
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-ble_bindkey"><i class="fa fa-key"></i> BindKey</label>
+      <input type="text" id="node-input-ble_bindkey" placeholder="BindKey" />
+    </div>
   </div>
 </script>
 

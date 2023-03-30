@@ -21,6 +21,8 @@ module.exports = (RED: NodeAPI) => {
     }
 
     self.current_status = self.deviceNode.current_status;
+    self.ble_address = self.config.ble_address;
+    self.ble_bindkey = self.config.ble_bindkey;
 
     const clearStatus = (timeout = 0) => {
       setTimeout(() => {
@@ -42,7 +44,7 @@ module.exports = (RED: NodeAPI) => {
     const onState = (state: any) => {
       const payload: any = {...state};
 
-      if (payload.key != config.entity) {
+      if (payload.key != self.config.entity) {
         return;
       }
 
@@ -65,6 +67,31 @@ module.exports = (RED: NodeAPI) => {
       });
     };
 
+    const onBle = (data: any) => {
+      let address: string = self.ble_address;
+      const payload: any = {...data};
+
+      address = address.replace(/[^A-fa-f0-9]/g, '').toLowerCase();
+      payload.address = payload.address.toString(16);
+
+      if (address != payload.address) {
+        return;
+      }
+
+      delete payload.key;
+
+      setStatus({fill: 'blue', shape: 'dot', text: 'ble'}, 3000);
+
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+
+      self.send({
+        payload: payload,
+        device: self.deviceNode.device,
+        config: entity?.config,
+        entity: entity
+      });
+    };
+
     const onStatus = (status: string) => {
       self.current_status = status;
 
@@ -74,11 +101,15 @@ module.exports = (RED: NodeAPI) => {
     self.onState = (state: any) => onState(state);
     self.deviceNode.on('onState', self.onState);
 
+    self.onBle = (data: any) => onBle(data);
+    self.deviceNode.on('onBle', self.onBle);
+
     self.onStatus = (status: string) => onStatus(status);
     self.deviceNode.on('onStatus', self.onStatus);
 
     self.on('close', (_: any, done: () => any) => {
       self.deviceNode.removeListener('onState', self.onState);
+      self.deviceNode.removeListener('onBle', self.onBle);
       self.deviceNode.removeListener('onStatus', self.onStatus);
       done();
     });
