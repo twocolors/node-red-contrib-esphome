@@ -49,7 +49,6 @@ module.exports = (RED) => {
             self.send({
                 payload: payload,
                 device: self.deviceNode.device,
-                config: entity === null || entity === void 0 ? void 0 : entity.config,
                 entity: entity
             });
         };
@@ -67,7 +66,6 @@ module.exports = (RED) => {
             self.send({
                 payload: payload,
                 device: self.deviceNode.device,
-                config: entity === null || entity === void 0 ? void 0 : entity.config,
                 entity: entity
             });
         };

@@ -45,7 +45,12 @@ module.exports = (RED) => {
         };
         self.on('input', (msg, send, done) => __awaiter(this, void 0, void 0, function* () {
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
-            const command = entity.type.toLowerCase() + 'CommandService';
+            if (typeof entity == 'undefined') {
+                setStatus(utils_1.Status['error'], 3000);
+                self.error(`entity (${config.entity}) not found on device`);
+                done();
+                return;
+            }
             const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
             const regexpEntity = /^(Logs|BLE)$/gi;
             if (entity.type.match(regexpType) || config.entity.match(regexpEntity)) {
@@ -59,6 +64,7 @@ module.exports = (RED) => {
             }
             setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
             try {
+                const command = entity.type.toLowerCase() + 'CommandService';
                 yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, msg.payload));
             }
             catch (e) {

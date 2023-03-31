@@ -41,7 +41,12 @@ module.exports = (RED: NodeAPI) => {
 
     self.on('input', async (msg: any, send: () => any, done: () => any) => {
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
-      const command = entity.type.toLowerCase() + 'CommandService';
+      if (typeof entity == 'undefined') {
+        setStatus(Status['error'], 3000);
+        self.error(`entity (${config.entity}) not found on device`);
+        done();
+        return;
+      }
 
       const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
       const regexpEntity = /^(Logs|BLE)$/gi;
@@ -58,6 +63,7 @@ module.exports = (RED: NodeAPI) => {
       setStatus({fill: 'yellow', shape: 'dot', text: data}, 3000);
 
       try {
+        const command = entity.type.toLowerCase() + 'CommandService';
         await self.deviceNode.client.connection[command]({key: config.entity, ...msg.payload});
       } catch (e: any) {
         setStatus(Status['error'], 3000);

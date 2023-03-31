@@ -60,7 +60,6 @@ module.exports = (RED: NodeAPI) => {
       self.send({
         payload: payload,
         device: self.deviceNode.device,
-        config: entity?.config,
         entity: entity
       });
     };
@@ -85,7 +84,6 @@ module.exports = (RED: NodeAPI) => {
       self.send({
         payload: payload,
         device: self.deviceNode.device,
-        config: entity?.config,
         entity: entity
       });
     };
