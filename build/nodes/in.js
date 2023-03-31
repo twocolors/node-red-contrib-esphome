@@ -9,17 +9,15 @@ module.exports = (RED) => {
         self.config = config;
         RED.nodes.createNode(this, config);
         try {
-            self.deviceNode = RED.nodes.getNode(self.config.device);
+            self.deviceNode = RED.nodes.getNode(config.device);
         }
         catch (_) {
             /* empty */
         }
-        if (!self.deviceNode || !self.config.entity) {
+        if (!self.deviceNode || !config.entity) {
             return;
         }
         self.current_status = self.deviceNode.current_status;
-        self.ble_address = self.config.ble_address;
-        self.ble_bindkey = self.config.ble_bindkey;
         const clearStatus = (timeout = 0) => {
             setTimeout(() => {
                 if (self.current_status) {
@@ -38,7 +36,7 @@ module.exports = (RED) => {
         };
         const onState = (state) => {
             const payload = Object.assign({}, state);
-            if (payload.key != self.config.entity) {
+            if (payload.key != config.entity) {
                 return;
             }
             delete payload.key;
@@ -56,11 +54,11 @@ module.exports = (RED) => {
             });
         };
         const onBle = (data) => {
-            let address = self.ble_address;
+            let address = config.bleaddress;
             const payload = Object.assign({}, data);
-            address = address.replace(/[^A-fa-f0-9]/g, '').toLowerCase();
+            address = address.toLowerCase().replace(/[^a-f0-9]/g, '');
             payload.address = payload.address.toString(16);
-            if (address != payload.address) {
+            if (payload.address != address) {
                 return;
             }
             delete payload.key;

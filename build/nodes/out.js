@@ -18,12 +18,12 @@ module.exports = (RED) => {
         self.config = config;
         RED.nodes.createNode(this, config);
         try {
-            self.deviceNode = RED.nodes.getNode(self.config.device);
+            self.deviceNode = RED.nodes.getNode(config.device);
         }
         catch (_) {
             /* empty */
         }
-        if (!self.deviceNode || !self.config.entity) {
+        if (!self.deviceNode || !config.entity) {
             return;
         }
         self.current_status = self.deviceNode.current_status;
@@ -44,10 +44,11 @@ module.exports = (RED) => {
             }
         };
         self.on('input', (msg, send, done) => __awaiter(this, void 0, void 0, function* () {
-            const entity = self.deviceNode.entities.find((e) => e.key == self.config.entity);
+            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             const command = entity.type.toLowerCase() + 'CommandService';
-            const regexp = /^(BinarySensor|Sensor|TextSensor|Systems)$/gi;
-            if (entity.type.match(regexp)) {
+            const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
+            const regexpEntity = /^(Logs|BLE)$/gi;
+            if (entity.type.match(regexpType) || config.entity.match(regexpEntity)) {
                 done();
                 return;
             }
@@ -58,7 +59,7 @@ module.exports = (RED) => {
             }
             setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
             try {
-                yield self.deviceNode.client.connection[command](Object.assign({ key: self.config.entity }, msg.payload));
+                yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, msg.payload));
             }
             catch (e) {
                 setStatus(utils_1.Status['error'], 3000);

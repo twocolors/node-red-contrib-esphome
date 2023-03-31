@@ -7,7 +7,6 @@ const Package = require('../../package.json');
 const utils_1 = require("../lib/utils");
 module.exports = (RED) => {
     RED.nodes.registerType('esphome-device', function (config) {
-        var _a, _b, _c, _d;
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         self.config = config;
@@ -16,9 +15,9 @@ module.exports = (RED) => {
         self.device = {};
         self.entities = [];
         self.current_status = 'disconnected';
-        self.logger = parseInt((_a = self.config) === null || _a === void 0 ? void 0 : _a.loglevel);
-        self.ble = Boolean((_b = self.config) === null || _b === void 0 ? void 0 : _b.ble);
-        if (!((_c = self.config) === null || _c === void 0 ? void 0 : _c.host) || !((_d = self.config) === null || _d === void 0 ? void 0 : _d.port)) {
+        self.logger = parseInt(config === null || config === void 0 ? void 0 : config.loglevel);
+        self.ble = Boolean(config === null || config === void 0 ? void 0 : config.ble);
+        if (!(config === null || config === void 0 ? void 0 : config.host) || !(config === null || config === void 0 ? void 0 : config.port)) {
             return;
         }
         self.onStatus = function (string) {
@@ -32,8 +31,8 @@ module.exports = (RED) => {
             self.emit('onBle', object);
         };
         let options = {
-            host: self.config.host,
-            port: self.config.port,
+            host: config.host,
+            port: config.port,
             password: self.credentials.password,
             clientInfo: Package.name + ' ' + Package.version,
             initializeDeviceInfo: true,
@@ -46,8 +45,8 @@ module.exports = (RED) => {
         };
         if (self.logger) {
             options = Object.assign(Object.assign({}, options), { initializeSubscribeLogs: {
-                    level: self.config.loglevel,
-                    dumpConfig: self.config.logdump
+                    level: config.loglevel,
+                    dumpConfig: config.logdump
                 } });
         }
         self.client = new Client(options);
@@ -94,7 +93,7 @@ module.exports = (RED) => {
                     type: 'Systems',
                     name: 'Logs',
                     config: {
-                        deviceClass: utils_1.LogLevel[self.config.loglevel]
+                        deviceClass: utils_1.LogLevel[config.loglevel]
                     }
                 });
             }

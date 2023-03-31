@@ -19,10 +19,10 @@ module.exports = (RED: NodeAPI) => {
       self.device = {};
       self.entities = [];
       self.current_status = 'disconnected';
-      self.logger = parseInt(self.config?.loglevel);
-      self.ble = Boolean(self.config?.ble);
+      self.logger = parseInt(config?.loglevel);
+      self.ble = Boolean(config?.ble);
 
-      if (!self.config?.host || !self.config?.port) {
+      if (!config?.host || !config?.port) {
         return;
       }
 
@@ -40,8 +40,8 @@ module.exports = (RED: NodeAPI) => {
       };
 
       let options: any = {
-        host: self.config.host,
-        port: self.config.port,
+        host: config.host,
+        port: config.port,
         password: self.credentials.password,
         clientInfo: Package.name + ' ' + Package.version,
         initializeDeviceInfo: true,
@@ -57,8 +57,8 @@ module.exports = (RED: NodeAPI) => {
         options = {
           ...options,
           initializeSubscribeLogs: {
-            level: self.config.loglevel,
-            dumpConfig: self.config.logdump
+            level: config.loglevel,
+            dumpConfig: config.logdump
           }
         };
       }
@@ -105,7 +105,7 @@ module.exports = (RED: NodeAPI) => {
             type: 'Systems',
             name: 'Logs',
             config: {
-              deviceClass: LogLevel[self.config.loglevel]
+              deviceClass: LogLevel[config.loglevel]
             }
           });
         }
