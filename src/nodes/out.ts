@@ -55,16 +55,17 @@ module.exports = (RED: NodeAPI) => {
         return;
       }
 
-      let data = msg.payload;
-      data = typeof data.state !== 'undefined' && typeof data.state !== 'object' ? data.state : inspect(data);
-      if (data && data.length > 32) {
-        data = data.substr(0, 32) + '...';
+      const payload: any = msg.payload;
+      let text =
+        typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : inspect(payload);
+      if (text && text.length > 32) {
+        text = text.substr(0, 32) + '...';
       }
-      setStatus({fill: 'yellow', shape: 'dot', text: data}, 3000);
+      setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
 
       try {
         const command = entity.type.toLowerCase() + 'CommandService';
-        await self.deviceNode.client.connection[command]({key: config.entity, ...msg.payload});
+        await self.deviceNode.client.connection[command]({key: config.entity, ...payload});
       } catch (e: any) {
         setStatus(Status['error'], 3000);
         self.error(e.message);

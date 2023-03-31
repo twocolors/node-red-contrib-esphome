@@ -57,15 +57,15 @@ module.exports = (RED) => {
                 done();
                 return;
             }
-            let data = msg.payload;
-            data = typeof data.state !== 'undefined' && typeof data.state !== 'object' ? data.state : (0, util_1.inspect)(data);
-            if (data && data.length > 32) {
-                data = data.substr(0, 32) + '...';
+            const payload = msg.payload;
+            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : (0, util_1.inspect)(payload);
+            if (text && text.length > 32) {
+                text = text.substr(0, 32) + '...';
             }
-            setStatus({ fill: 'yellow', shape: 'dot', text: data }, 3000);
+            setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             try {
                 const command = entity.type.toLowerCase() + 'CommandService';
-                yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, msg.payload));
+                yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, payload));
             }
             catch (e) {
                 setStatus(utils_1.Status['error'], 3000);
