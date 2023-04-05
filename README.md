@@ -21,9 +21,13 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
+#### 0.2.1
+  - fix #15
+  - support MediaPlayer
+  - support BLE Advertisements
+  - support Encryption Key (thx @richardhopton)
 #### 0.1.1
   - fix logs
-
 #### 0.1.0
   - support logs in node
   - allow empty password
@@ -76,6 +80,10 @@ $ npm i node-red-contrib-esphome
 #### Lock
   - `command` - REQUIRED. 0 - UNLOCK, 1 - LOCK, 2 - OPEN
   - `code` - optional. string. See `requiresCode` attr in config
+#### MediaPlayer
+  - `command` - REQUIRED. 0 - MEDIA_PLAYER_COMMAND_PLAY, 1 - MEDIA_PLAYER_COMMAND_PAUSE, 2 - MEDIA_PLAYER_COMMAND_STOP, 3 - MEDIA_PLAYER_COMMAND_MUTE, 4 - MEDIA_PLAYER_COMMAND_UNMUTE
+  - `volume` - optional. float
+  - `mediaUrl` - optional. string
 #### Number
   - `state` - REQUIRED. float. See `minValue`, `maxValue`, and `step` attrs in config
 #### Select
