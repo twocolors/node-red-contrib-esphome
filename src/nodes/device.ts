@@ -42,7 +42,6 @@ module.exports = (RED: NodeAPI) => {
       let options: any = {
         host: config.host,
         port: config.port,
-        password: self.credentials.password,
         clientInfo: Package.name + ' ' + Package.version,
         initializeDeviceInfo: true,
         initializeListEntities: true,
@@ -52,6 +51,18 @@ module.exports = (RED: NodeAPI) => {
         pingInterval: 15 * 1000,
         initializeSubscribeBLEAdvertisements: self.ble
       };
+
+      if (self.credentials.encryptionkey) {
+        options = {
+          ...options,
+          encryptionKey: self.credentials.encryptionkey
+        };
+      } else {
+        options = {
+          ...options,
+          password: self.credentials.password
+        };
+      }
 
       if (self.logger) {
         options = {
@@ -74,19 +85,6 @@ module.exports = (RED: NodeAPI) => {
       }
 
       self.client.on('error', (e: Error) => {
-        if (e.message.includes('EHOSTUNREACH')) {
-          /* empty */
-        } else if (e.message.includes('Invalid password')) {
-          /* empty */
-        } else if (e.message.includes('ECONNRESET')) {
-          /* empty */
-        } else if (e.message.includes('TIMEOUT')) {
-          /* empty */
-        } else if (e.message.includes('write after end')) {
-          /* empty */
-        } else {
-          // copy this error to issues ...
-        }
         self.error(e.message);
         self.onStatus('error');
       });
@@ -163,6 +161,7 @@ module.exports = (RED: NodeAPI) => {
     },
     {
       credentials: {
+        encryptionkey: {type: 'password'},
         password: {type: 'password'}
       }
     }

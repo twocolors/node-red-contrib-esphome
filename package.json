@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "build:clean": "npm run clean && npm run build",
-    "clean": "rm -rf build/lib build/**/*.js",
+    "clean": "rm -rf build/**/*.js",
     "eslint": "eslint \"src/**/*.ts\"",
     "prettier": "prettier --write \"**/*.{js,ts}\""
   },
@@ -29,11 +29,11 @@
     }
   },
   "dependencies": {
-    "@2colors/esphome-native-api":"1.1.1"
+    "@2colors/esphome-native-api": "^1.2.1"
   },
   "devDependencies": {
-    "@types/node":"^18.11.18",
-    "@types/node-red":"^1.2.1",
+    "@types/node": "^18.11.18",
+    "@types/node-red": "^1.2.1",
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
     "eslint": "^8.31.0",

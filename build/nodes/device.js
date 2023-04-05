@@ -33,7 +33,6 @@ module.exports = (RED) => {
         let options = {
             host: config.host,
             port: config.port,
-            password: self.credentials.password,
             clientInfo: Package.name + ' ' + Package.version,
             initializeDeviceInfo: true,
             initializeListEntities: true,
@@ -43,6 +42,12 @@ module.exports = (RED) => {
             pingInterval: 15 * 1000,
             initializeSubscribeBLEAdvertisements: self.ble
         };
+        if (self.credentials.encryptionkey) {
+            options = Object.assign(Object.assign({}, options), { encryptionKey: self.credentials.encryptionkey });
+        }
+        else {
+            options = Object.assign(Object.assign({}, options), { password: self.credentials.password });
+        }
         if (self.logger) {
             options = Object.assign(Object.assign({}, options), { initializeSubscribeLogs: {
                     level: config.loglevel,
@@ -59,24 +64,6 @@ module.exports = (RED) => {
             return;
         }
         self.client.on('error', (e) => {
-            if (e.message.includes('EHOSTUNREACH')) {
-                /* empty */
-            }
-            else if (e.message.includes('Invalid password')) {
-                /* empty */
-            }
-            else if (e.message.includes('ECONNRESET')) {
-                /* empty */
-            }
-            else if (e.message.includes('TIMEOUT')) {
-                /* empty */
-            }
-            else if (e.message.includes('write after end')) {
-                /* empty */
-            }
-            else {
-                // copy this error to issues ...
-            }
             self.error(e.message);
             self.onStatus('error');
         });
@@ -141,6 +128,7 @@ module.exports = (RED) => {
         });
     }, {
         credentials: {
+            encryptionkey: { type: 'password' },
             password: { type: 'password' }
         }
     });

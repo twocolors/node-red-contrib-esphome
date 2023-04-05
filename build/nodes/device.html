@@ -11,6 +11,7 @@
     },
     paletteLabel: 'device',
     credentials: {
+      encryptionkey: {type: 'password'},
       password: {type: 'password'}
     },
     label: function () {
@@ -127,8 +128,13 @@
   </div>
 
   <div class="form-row">
+    <label for="node-config-input-encryptionkey"><i class="fa fa-key"></i> Encryption</label>
+    <input type="password" id="node-config-input-encryptionkey" placeholder="Encryption Key" />
+  </div>
+
+  <div class="form-row">
     <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
-    <input type="password" id="node-config-input-password" placeholder="Password" />
+    <input type="password" id="node-config-input-password" placeholder="Deprecated" />
   </div>
 
   <div class="form-row">
@@ -155,7 +161,7 @@
   <div class="form-row">
     <label for="node-config-input-ble"><i class="fa fa-bluetooth"></i> <span>BLE</span></label>
     <label for="node-config-input-ble" style="width:70%">
-      <input type="checkbox" id="node-config-input-ble" style="display:inline-block; width:22px; vertical-align:top;" autocomplete="off">
+      <input type="checkbox" id="node-config-input-ble" style="display:inline-block; width:22px; vertical-align:top;" autocomplete="off"><span>Advertisements</span>
     </label>
   </div>
 
@@ -172,6 +178,8 @@
     <dd>host or ip address</dd>
     <dt class="required">Port<span class="property-type">number</span></dt>
     <dd>port</dd>
+    <dt class="required">Encryption Key<span class="property-type">password</span></dt>
+    <dd>encryption key for API</dd>
     <dt class="required">Password<span class="property-type">password</span></dt>
     <dd>password for API</dd>
     <dt class="required">Log Level<span class="property-type">number</span></dt>
