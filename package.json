@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-esphome",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Node-RED nodes to ESPhome devices",
   "homepage": "https://github.com/twocolors/node-red-contrib-esphome",
   "license": "MIT",
@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "@2colors/esphome-native-api": "^1.2.1"
+    "@2colors/esphome-native-api": "^1.2.3"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
@@ -38,8 +38,8 @@
     "@typescript-eslint/parser": "^5.45.1",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.1",
     "typescript": "^5.0.2"
   },

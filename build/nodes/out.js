@@ -43,6 +43,7 @@ module.exports = (RED) => {
                 clearStatus(timeout);
             }
         };
+        const capitalize = (s) => (s[0].toLowerCase() + s.slice(1));
         self.on('input', (msg, send, done) => __awaiter(this, void 0, void 0, function* () {
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             if (typeof entity == 'undefined') {
@@ -64,7 +65,7 @@ module.exports = (RED) => {
             }
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             try {
-                const command = entity.type.toLowerCase() + 'CommandService';
+                const command = capitalize(entity.type + 'CommandService');
                 yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, payload));
             }
             catch (e) {

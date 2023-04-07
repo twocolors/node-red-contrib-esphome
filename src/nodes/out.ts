@@ -39,6 +39,8 @@ module.exports = (RED: NodeAPI) => {
       }
     };
 
+    const capitalize = (s: string) => (s[0].toLowerCase() + s.slice(1)) as string;
+
     self.on('input', async (msg: any, send: () => any, done: () => any) => {
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
       if (typeof entity == 'undefined') {
@@ -64,7 +66,7 @@ module.exports = (RED: NodeAPI) => {
       setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
 
       try {
-        const command = entity.type.toLowerCase() + 'CommandService';
+        const command = capitalize(entity.type + 'CommandService');
         await self.deviceNode.client.connection[command]({key: config.entity, ...payload});
       } catch (e: any) {
         setStatus(Status['error'], 3000);

@@ -21,10 +21,9 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
-#### 0.2.1
-  - fix #15
+#### 0.2.0
   - support MediaPlayer
-  - support BLE Advertisements
+  - support BLE Advertisements (thx @richardhopton)
   - support Encryption Key (thx @richardhopton)
 #### 0.1.1
   - fix logs
