@@ -17,11 +17,11 @@ module.exports = (RED) => {
         if (!self.deviceNode || !config.entity) {
             return;
         }
-        self.current_status = self.deviceNode.current_status;
         const clearStatus = (timeout = 0) => {
+            const current_status = self.deviceNode.current_status;
             setTimeout(() => {
-                if (self.current_status) {
-                    self.status(utils_1.Status[self.current_status]);
+                if (current_status) {
+                    self.status(utils_1.Status[current_status]);
                 }
                 else {
                     self.status({});
@@ -70,8 +70,7 @@ module.exports = (RED) => {
             });
         };
         const onStatus = (status) => {
-            self.current_status = status;
-            setStatus(utils_1.Status[self.current_status]);
+            setStatus(utils_1.Status[status]);
         };
         self.onState = (state) => onState(state);
         self.deviceNode.on('onState', self.onState);

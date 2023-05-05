@@ -23,6 +23,7 @@ module.exports = (RED) => {
         self.onStatus = function (string) {
             self.current_status = string;
             self.emit('onStatus', string);
+            self.emit('onState', { key: 'status', state: string });
         };
         self.onState = function (object) {
             self.emit('onState', object);
@@ -92,6 +93,12 @@ module.exports = (RED) => {
                     name: 'BLE'
                 });
             }
+            // status to entities
+            self.entities.push({
+                key: 'status',
+                type: 'Systems',
+                name: 'Status'
+            });
             self.onStatus('connecting');
         });
         self.client.on('initialized', () => {

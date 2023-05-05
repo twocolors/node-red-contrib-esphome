@@ -26,11 +26,11 @@ module.exports = (RED) => {
         if (!self.deviceNode || !config.entity) {
             return;
         }
-        self.current_status = self.deviceNode.current_status;
         const clearStatus = (timeout = 0) => {
+            const current_status = self.deviceNode.current_status;
             setTimeout(() => {
-                if (self.current_status) {
-                    self.status(utils_1.Status[self.current_status]);
+                if (current_status) {
+                    self.status(utils_1.Status[current_status]);
                 }
                 else {
                     self.status({});
@@ -48,12 +48,12 @@ module.exports = (RED) => {
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             if (typeof entity == 'undefined') {
                 setStatus(utils_1.Status['error'], 3000);
-                self.error(`entity (${config.entity}) not found on device`);
+                self.error(`Entity (${config.entity}) not found on device`);
                 done();
                 return;
             }
             const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
-            const regexpEntity = /^(Logs|BLE)$/gi;
+            const regexpEntity = /^(Logs|BLE|Status)$/gi;
             if (entity.type.match(regexpType) || config.entity.match(regexpEntity)) {
                 done();
                 return;
@@ -75,8 +75,7 @@ module.exports = (RED) => {
             done();
         }));
         const onStatus = (status) => {
-            self.current_status = status;
-            setStatus(utils_1.Status[self.current_status]);
+            setStatus(utils_1.Status[status]);
         };
         self.onStatus = (status) => onStatus(status);
         self.deviceNode.on('onStatus', self.onStatus);

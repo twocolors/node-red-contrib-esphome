@@ -29,6 +29,8 @@ module.exports = (RED: NodeAPI) => {
       self.onStatus = function (string: string) {
         self.current_status = string;
         self.emit('onStatus', string);
+
+        self.emit('onState', {key: 'status', state: string});
       };
 
       self.onState = function (object: any) {
@@ -115,6 +117,12 @@ module.exports = (RED: NodeAPI) => {
             name: 'BLE'
           });
         }
+        // status to entities
+        self.entities.push({
+          key: 'status',
+          type: 'Systems',
+          name: 'Status'
+        });
 
         self.onStatus('connecting');
       });
