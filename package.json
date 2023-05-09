@@ -32,7 +32,7 @@
     "@2colors/esphome-native-api": "^1.2.3"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
+    "@types/node": "^20.1.0",
     "@types/node-red": "^1.2.1",
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
