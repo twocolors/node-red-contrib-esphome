@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-esphome",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Node-RED nodes to ESPhome devices",
   "homepage": "https://github.com/twocolors/node-red-contrib-esphome",
   "license": "MIT",
@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "@2colors/esphome-native-api": "^1.2.3"
+    "@2colors/esphome-native-api": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^20.1.0",
@@ -52,6 +52,7 @@
     "esp",
     "home",
     "esp32",
-    "esp8266"
+    "esp8266",
+    "iot"
   ]
 }
