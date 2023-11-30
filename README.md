@@ -21,6 +21,8 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
+#### 0.2.3
+  - support Text
 #### 0.2.1
   - support Status in node
 #### 0.2.0
@@ -96,6 +98,8 @@ $ npm i node-red-contrib-esphome
   - `volume` - optional. integer. See `supportsVolume` attr in config
 #### Switch
   - `state` - REQUIRED. boolean
+#### Text
+  - `state` - REQUIRED. string. See `minLength`, `maxLength` attrs in config
 
 ## Pictures
 
