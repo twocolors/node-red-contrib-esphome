@@ -43,7 +43,29 @@ $ npm i node-red-contrib-esphome
 
 ## Inputs
 
+Inputs are sent to the node as JSON payloads. The list below provides a list of keys and values (and their expected value type) that may be sent to the "esphome out" nodes. It is helpful to watch the "esphome in" messages to learn which type and range of commands are expected by your device.
+
+Some example message payloads are:
+
+```js
+// to set a light on:
+msg.payload = {'state': true}
+
+// set a door lock to unlock:
+msg.payload = {'command':0}
+
+// to toggle a light to 42% brightness:
+msg.payload = {'brightness': 42}
+
+// to press a button:
+msg.payload = true
+```
+
+
 #### Button
+
+Button inputs may be triggered with any payload in the input message. Simply send a timestamp, `true`, or other payload to the button node. Button type nodes provide no messages into nodered.
+
 #### Climate
   - `mode` - optional. 0 - OFF, 1 - AUTO, 2 - COOL, 3 - HEAT, 4 - FAN_ONLY, 5 - DRY.  See `supportedModesList` attr in config
   - `targetTemperature`- optional. float
