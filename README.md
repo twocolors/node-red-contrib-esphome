@@ -64,7 +64,7 @@ msg.payload = true
 
 #### Button
 
-Button inputs may be triggered with any payload in the input message. Simply send a timestamp, `true`, or other payload to the button node. Button type nodes provide no messages into nodered.
+Button inputs may be triggered with any payload in the input message. Simply send a timestamp, `true`, or other payload to the button node. Button type nodes provide no messages into Node-RED.
 
 #### Climate
   - `mode` - optional. 0 - OFF, 1 - AUTO, 2 - COOL, 3 - HEAT, 4 - FAN_ONLY, 5 - DRY.  See `supportedModesList` attr in config
