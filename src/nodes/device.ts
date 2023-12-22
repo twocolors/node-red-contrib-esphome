@@ -44,12 +44,12 @@ module.exports = (RED: NodeAPI) => {
       let options: any = {
         host: config.host,
         port: config.port,
-        clientInfo: Package.name + ' ' + Package.version,
+        clientInfo: `${Package.name} ${Package.version}`,
         initializeDeviceInfo: true,
         initializeListEntities: true,
         initializeSubscribeStates: true,
         reconnect: true,
-        reconnectInterval: 15 * 1000,
+        reconnectInterval: (config?.reconnect || 15) * 1000,
         pingInterval: 15 * 1000,
         initializeSubscribeBLEAdvertisements: self.ble
       };

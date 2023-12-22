@@ -21,6 +21,8 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
+#### 0.2.5
+  - support Reconnect interval (Default: 15 sec) [issues/29](https://github.com/twocolors/node-red-contrib-esphome/issues/29)
 #### 0.2.3
   - support Text
 #### 0.2.1
@@ -29,11 +31,6 @@ Node-RED nodes to ESPhome devices
   - support MediaPlayer
   - support BLE Advertisements (thx @richardhopton)
   - support Encryption Key (thx @richardhopton)
-#### 0.1.1
-  - fix logs
-#### 0.1.0
-  - support logs in node
-  - allow empty password
 
 ## Installation
 
