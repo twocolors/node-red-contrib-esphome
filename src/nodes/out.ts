@@ -21,7 +21,7 @@ module.exports = (RED: NodeAPI) => {
     }
 
     const clearStatus = (timeout = 0) => {
-      const current_status = self.deviceNode.current_status;
+      const current_status: string = self.deviceNode.current_status;
       setTimeout(() => {
         if (current_status) {
           self.status(Status[current_status as string]);
@@ -57,16 +57,18 @@ module.exports = (RED: NodeAPI) => {
       }
 
       const payload: any = msg.payload;
-      let text =
-        typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : inspect(payload);
+      let text: string =
+        typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
+          ? String(payload.state)
+          : inspect(payload);
       if (text && text.length > 32) {
-        text = text.substr(0, 32) + '...';
+        text = `${text.substring(0, 32)}...`;
       }
-      setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
 
       try {
         const command = capitalize(entity.type + 'CommandService');
         await self.deviceNode.client.connection[command]({key: config.entity, ...payload});
+        setStatus({fill: 'yellow', shape: 'dot', text: text});
       } catch (e: any) {
         setStatus(Status['error'], 3000);
         self.error(e.message);

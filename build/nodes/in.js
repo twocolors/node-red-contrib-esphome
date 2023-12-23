@@ -8,6 +8,8 @@ module.exports = (RED) => {
         const self = this;
         self.config = config;
         RED.nodes.createNode(this, config);
+        // system
+        self.text_status = undefined;
         try {
             self.deviceNode = RED.nodes.getNode(config.device);
         }
@@ -21,7 +23,9 @@ module.exports = (RED) => {
             const current_status = self.deviceNode.current_status;
             setTimeout(() => {
                 if (current_status) {
-                    self.status(utils_1.Status[current_status]);
+                    if (current_status != 'connected' || self.text_status == 'connected') {
+                        self.status(utils_1.Status[current_status]);
+                    }
                 }
                 else {
                     self.status({});
@@ -40,10 +44,13 @@ module.exports = (RED) => {
                 return;
             }
             delete payload.key;
-            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : (0, util_1.inspect)(payload);
+            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
+                ? String(payload.state)
+                : (0, util_1.inspect)(payload);
             if (text && text.length > 32) {
-                text = text.substr(0, 32) + '...';
+                text = `${text.substring(0, 32)}...`;
             }
+            self.text_status = text;
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({

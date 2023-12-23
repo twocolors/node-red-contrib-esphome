@@ -59,14 +59,16 @@ module.exports = (RED) => {
                 return;
             }
             const payload = msg.payload;
-            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? payload.state : (0, util_1.inspect)(payload);
+            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
+                ? String(payload.state)
+                : (0, util_1.inspect)(payload);
             if (text && text.length > 32) {
-                text = text.substr(0, 32) + '...';
+                text = `${text.substring(0, 32)}...`;
             }
-            setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             try {
                 const command = capitalize(entity.type + 'CommandService');
                 yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, payload));
+                setStatus({ fill: 'yellow', shape: 'dot', text: text });
             }
             catch (e) {
                 setStatus(utils_1.Status['error'], 3000);

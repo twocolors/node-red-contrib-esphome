@@ -22,6 +22,7 @@ Node-RED nodes to ESPhome devices
 ## Changelog
 
 #### 0.2.5
+  - change status algorithm [issues/30](https://github.com/twocolors/node-red-contrib-esphome/issues/30)
   - support Reconnect interval (Default: 15 sec) [issues/29](https://github.com/twocolors/node-red-contrib-esphome/issues/29)
 #### 0.2.3
   - support Text
