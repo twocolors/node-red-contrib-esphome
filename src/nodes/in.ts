@@ -1,6 +1,5 @@
 import {NodeAPI} from 'node-red';
 import {Status} from '../lib/utils';
-import {inspect} from 'util';
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType('esphome-in', function (this: any, config: any) {
@@ -55,7 +54,7 @@ module.exports = (RED: NodeAPI) => {
       let text: string =
         typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
           ? String(payload.state)
-          : inspect(payload);
+          : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
       if (text && text.length > 32) {
         text = `${text.substring(0, 32)}...`;
       }

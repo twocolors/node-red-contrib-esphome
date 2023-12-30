@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("../lib/utils");
-const util_1 = require("util");
 module.exports = (RED) => {
     RED.nodes.registerType('esphome-in', function (config) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -46,7 +45,7 @@ module.exports = (RED) => {
             delete payload.key;
             let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
                 ? String(payload.state)
-                : (0, util_1.inspect)(payload);
+                : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
             if (text && text.length > 32) {
                 text = `${text.substring(0, 32)}...`;
             }
