@@ -56,10 +56,16 @@ module.exports = (RED: NodeAPI) => {
       }
 
       const payload: any = msg.payload;
-      let text: string =
-        typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
-          ? String(payload.state)
-          : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
+      let text: string;
+      if (typeof payload.state !== 'undefined' && typeof payload.state !== 'object') {
+        text = String(payload.state);
+      } else {
+        if (typeof payload !== 'undefined' && typeof payload === 'object') {
+          text = String(`${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`);
+        } else {
+          text = String(payload);
+        }
+      }
       if (text && text.length > 32) {
         text = `${text.substring(0, 32)}...`;
       }
@@ -67,7 +73,7 @@ module.exports = (RED: NodeAPI) => {
       try {
         const command = capitalize(entity.type + 'CommandService');
         await self.deviceNode.client.connection[command]({key: config.entity, ...payload});
-        setStatus({fill: 'yellow', shape: 'dot', text: text});
+        if (text) setStatus({fill: 'yellow', shape: 'dot', text: text});
       } catch (e: any) {
         setStatus(Status['error'], 3000);
         self.error(e.message);

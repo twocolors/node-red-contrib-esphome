@@ -58,16 +58,26 @@ module.exports = (RED) => {
                 return;
             }
             const payload = msg.payload;
-            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
-                ? String(payload.state)
-                : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
+            let text;
+            if (typeof payload.state !== 'undefined' && typeof payload.state !== 'object') {
+                text = String(payload.state);
+            }
+            else {
+                if (typeof payload !== 'undefined' && typeof payload === 'object') {
+                    text = String(`${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`);
+                }
+                else {
+                    text = String(payload);
+                }
+            }
             if (text && text.length > 32) {
                 text = `${text.substring(0, 32)}...`;
             }
             try {
                 const command = capitalize(entity.type + 'CommandService');
                 yield self.deviceNode.client.connection[command](Object.assign({ key: config.entity }, payload));
-                setStatus({ fill: 'yellow', shape: 'dot', text: text });
+                if (text)
+                    setStatus({ fill: 'yellow', shape: 'dot', text: text });
             }
             catch (e) {
                 setStatus(utils_1.Status['error'], 3000);
