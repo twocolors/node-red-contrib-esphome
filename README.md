@@ -21,6 +21,8 @@ Node-RED nodes to ESPhome devices
 
 ## Changelog
 
+#### 0.2.7
+  - fix status [issues/36](https://github.com/twocolors/node-red-contrib-esphome/issues/36)
 #### 0.2.5
   - change status algorithm [issues/30](https://github.com/twocolors/node-red-contrib-esphome/issues/30)
   - support Reconnect interval (Default: 15 sec) [issues/29](https://github.com/twocolors/node-red-contrib-esphome/issues/29)
@@ -28,10 +30,6 @@ Node-RED nodes to ESPhome devices
   - support Text
 #### 0.2.1
   - support Status in node
-#### 0.2.0
-  - support MediaPlayer
-  - support BLE Advertisements (thx @richardhopton)
-  - support Encryption Key (thx @richardhopton)
 
 ## Installation
 
