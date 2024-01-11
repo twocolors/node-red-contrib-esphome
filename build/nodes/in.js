@@ -43,9 +43,7 @@ module.exports = (RED) => {
                 return;
             }
             delete payload.key;
-            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
-                ? String(payload.state)
-                : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
+            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? String(payload.state) : 'json';
             if (text && text.length > 32) {
                 text = `${text.substring(0, 32)}...`;
             }

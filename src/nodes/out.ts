@@ -61,7 +61,7 @@ module.exports = (RED: NodeAPI) => {
         text = String(payload.state);
       } else {
         if (typeof payload !== 'undefined' && typeof payload === 'object') {
-          text = String(`${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`);
+          text = 'json';
         } else {
           text = String(payload);
         }

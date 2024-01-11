@@ -52,9 +52,7 @@ module.exports = (RED: NodeAPI) => {
       delete payload.key;
 
       let text: string =
-        typeof payload.state !== 'undefined' && typeof payload.state !== 'object'
-          ? String(payload.state)
-          : `${Object.keys(payload)[0]}: ${Object.values(payload)[0]}`;
+        typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? String(payload.state) : 'json';
       if (text && text.length > 32) {
         text = `${text.substring(0, 32)}...`;
       }
