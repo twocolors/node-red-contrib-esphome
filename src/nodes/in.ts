@@ -62,6 +62,7 @@ module.exports = (RED: NodeAPI) => {
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
       self.send({
+        topic: self.config.topic,
         payload: payload,
         device: self.deviceNode.device,
         entity: entity

@@ -7,6 +7,7 @@
       name: {},
       device: {value: '', type: 'esphome-device'},
       entity: {value: ''},
+      topic: {},
       bleaddress: {value: ''}
     },
     outputs: 1,
@@ -113,6 +114,11 @@
   <div class="form-row">
     <label for="node-input-entity"><i class="fa fa-globe"></i> Entity</label>
     <select id="node-input-entity" style="width: 70%;" disabled></select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-topic"><i class="fa fa-tag"></i> Topic</label>
+    <input type="text" id="node-input-topic" placeholder="Topic" />
   </div>
 
   <div id="ble-show" style="display: none;">
