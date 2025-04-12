@@ -39,6 +39,7 @@ module.exports = (RED) => {
         };
         const onState = (state) => {
             const payload = Object.assign({}, state);
+            const topic = self.config.topic === undefined ? "" : self.config.topic;
             if (payload.key != config.entity) {
                 return;
             }
@@ -51,6 +52,7 @@ module.exports = (RED) => {
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({
+                topic: topic,
                 payload: payload,
                 device: self.deviceNode.device,
                 entity: entity
