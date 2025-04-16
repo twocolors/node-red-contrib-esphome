@@ -31,6 +31,18 @@ Node-RED nodes to ESPhome devices
 #### 0.2.1
   - support Status in node
 
+## Prerequisites
+Your ESPHome device must be configured with the ESPHome API enabled.
+
+In your device.yaml configuration file:
+
+```yaml
+# Example configuration entry
+api:
+```
+
+See [ESPHome documentation on api configuration](https://esphome.io/components/api.html) for more information.
+
 ## Installation
 
 ```bash
