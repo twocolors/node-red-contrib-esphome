@@ -19,18 +19,6 @@
 
 Node-RED nodes to ESPhome devices
 
-## Changelog
-
-#### 0.2.7
-  - fix status [issues/36](https://github.com/twocolors/node-red-contrib-esphome/issues/36)
-#### 0.2.5
-  - change status algorithm [issues/30](https://github.com/twocolors/node-red-contrib-esphome/issues/30)
-  - support Reconnect interval (Default: 15 sec) [issues/29](https://github.com/twocolors/node-red-contrib-esphome/issues/29)
-#### 0.2.3
-  - support Text
-#### 0.2.1
-  - support Status in node
-
 ## Prerequisites
 Your ESPHome device must be configured with the ESPHome API enabled.
 
