@@ -44,6 +44,7 @@ module.exports = (RED: NodeAPI) => {
 
     const onState = (state: any) => {
       const payload: any = {...state};
+	  const topic: any = self.config.topic === undefined ? "" : self.config.topic;
 
       if (payload.key != config.entity) {
         return;
@@ -62,6 +63,7 @@ module.exports = (RED: NodeAPI) => {
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
       self.send({
+        topic: topic,
         payload: payload,
         device: self.deviceNode.device,
         entity: entity
