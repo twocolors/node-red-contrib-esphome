@@ -39,7 +39,7 @@ module.exports = (RED) => {
         };
         const onState = (state) => {
             const payload = Object.assign({}, state);
-            const topic = self.config.topic === undefined ? "" : self.config.topic;
+            const topic = self.config.topic === undefined ? '' : self.config.topic;
             if (payload.key != config.entity) {
                 return;
             }
