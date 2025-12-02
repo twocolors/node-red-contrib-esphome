@@ -1,5 +1,5 @@
 import {NodeAPI} from 'node-red';
-import {Status} from '../lib/utils';
+import {Status, roundToX} from '../lib/utils';
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType('esphome-out', function (this: any, config: any) {
@@ -58,16 +58,25 @@ module.exports = (RED: NodeAPI) => {
       const payload: any = msg.payload;
       let text: string;
       if (typeof payload.state !== 'undefined' && typeof payload.state !== 'object') {
-        text = String(payload.state);
+        if (entity.config.accuracyDecimals >= 0) {
+          text = String(roundToX(payload.state, entity.config.accuracyDecimals));
+        } else {
+          text = String(payload.state);
+        }
       } else {
         if (typeof payload !== 'undefined' && typeof payload === 'object') {
           text = 'json';
+        } else if (entity.config.accuracyDecimals >= 0) {
+          text = String(roundToX(payload, entity.config.accuracyDecimals));
         } else {
           text = String(payload);
         }
       }
       if (text && text.length > 32) {
         text = `${text.substring(0, 32)}...`;
+      }
+      if (text && entity.config.unitOfMeasurement) {
+        text = `${text} ${entity.config.unitOfMeasurement}`;
       }
 
       try {

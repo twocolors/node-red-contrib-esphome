@@ -60,11 +60,19 @@ module.exports = (RED) => {
             const payload = msg.payload;
             let text;
             if (typeof payload.state !== 'undefined' && typeof payload.state !== 'object') {
-                text = String(payload.state);
+                if (entity.config.accuracyDecimals >= 0) {
+                    text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
+                }
+                else {
+                    text = String(payload.state);
+                }
             }
             else {
                 if (typeof payload !== 'undefined' && typeof payload === 'object') {
                     text = 'json';
+                }
+                else if (entity.config.accuracyDecimals >= 0) {
+                    text = String((0, utils_1.roundToX)(payload, entity.config.accuracyDecimals));
                 }
                 else {
                     text = String(payload);
@@ -72,6 +80,9 @@ module.exports = (RED) => {
             }
             if (text && text.length > 32) {
                 text = `${text.substring(0, 32)}...`;
+            }
+            if (text && entity.config.unitOfMeasurement) {
+                text = `${text} ${entity.config.unitOfMeasurement}`;
             }
             try {
                 const command = capitalize(entity.type + 'CommandService');
