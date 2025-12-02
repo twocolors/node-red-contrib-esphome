@@ -31,3 +31,7 @@ export const LogLevel: {[key: number]: string} = {
   6: 'VERBOSE',
   7: 'VERY_VERBOSE'
 } as const;
+
+export function roundToX(num: number, X: number): number {
+  return Number(Math.round(Number(`${num}e+${X}`)) + `e-${X}`);
+}

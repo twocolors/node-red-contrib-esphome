@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogLevel = exports.Status = void 0;
+exports.roundToX = roundToX;
 exports.Status = {
     error: {
         fill: 'red',
@@ -33,4 +34,7 @@ exports.LogLevel = {
     6: 'VERBOSE',
     7: 'VERY_VERBOSE'
 };
+function roundToX(num, X) {
+    return Number(Math.round(Number(`${num}e+${X}`)) + `e-${X}`);
+}
 //# sourceMappingURL=utils.js.map

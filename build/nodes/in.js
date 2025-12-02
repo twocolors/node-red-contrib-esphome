@@ -44,13 +44,27 @@ module.exports = (RED) => {
                 return;
             }
             delete payload.key;
-            let text = typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? String(payload.state) : 'json';
-            if (text && text.length > 32) {
-                text = `${text.substring(0, 32)}...`;
+            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
+            let text = '';
+            if (typeof payload.state !== 'undefined') {
+                if (typeof payload.state === 'object') {
+                    text = 'json';
+                }
+                else if (entity.config.accuracyDecimals >= 0) {
+                    text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
+                }
+                else {
+                    text = String(payload.state);
+                }
+                if (text && text.length > 32) {
+                    text = `${text.substring(0, 32)}...`;
+                }
+                if (entity.config.unitOfMeasurement) {
+                    text = `${text} ${entity.config.unitOfMeasurement}`;
+                }
             }
             self.text_status = text;
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
-            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({
                 topic: topic,
                 payload: payload,

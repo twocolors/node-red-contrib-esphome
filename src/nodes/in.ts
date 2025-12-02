@@ -1,5 +1,5 @@
 import {NodeAPI} from 'node-red';
-import {Status} from '../lib/utils';
+import {Status, roundToX} from '../lib/utils';
 
 module.exports = (RED: NodeAPI) => {
   RED.nodes.registerType('esphome-in', function (this: any, config: any) {
@@ -52,15 +52,28 @@ module.exports = (RED: NodeAPI) => {
 
       delete payload.key;
 
-      let text: string =
-        typeof payload.state !== 'undefined' && typeof payload.state !== 'object' ? String(payload.state) : 'json';
-      if (text && text.length > 32) {
-        text = `${text.substring(0, 32)}...`;
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+
+      let text: string = '';
+      if (typeof payload.state !== 'undefined') {
+        if (typeof payload.state === 'object') {
+          text = 'json';        
+        } else if (entity.config.accuracyDecimals >= 0) {
+          text = String(roundToX(payload.state, entity.config.accuracyDecimals));
+        } else {
+          text = String(payload.state);
+        }
+
+        if (text && text.length > 32) {
+          text = `${text.substring(0, 32)}...`;
+        }
+        if (entity.config.unitOfMeasurement) {
+          text = `${text} ${entity.config.unitOfMeasurement}`;
+        }
       }
+
       self.text_status = text;
       setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
-
-      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
       self.send({
         topic: topic,
