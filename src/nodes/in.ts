@@ -11,6 +11,8 @@ module.exports = (RED: NodeAPI) => {
 
     // system
     self.text_status = undefined;
+    self.lastStateTime = {};
+    self.stateThrottleInterval = config.stateThrottleInterval || 100; // minimum ms between same entity states
 
     try {
       self.deviceNode = RED.nodes.getNode(config.device);
@@ -43,6 +45,16 @@ module.exports = (RED: NodeAPI) => {
     };
 
     const onState = (state: any) => {
+      const now = Date.now();
+      const entityKey = state.key;
+      
+      // Throttle state updates per entity
+      if (self.lastStateTime[entityKey] && (now - self.lastStateTime[entityKey]) < self.stateThrottleInterval) {
+        return; // Skip this update
+      }
+      
+      self.lastStateTime[entityKey] = now;
+      
       const payload: any = {...state};
       const topic: any = self.config.topic === undefined ? '' : self.config.topic;
 

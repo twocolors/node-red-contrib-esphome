@@ -5,7 +5,8 @@
       name: {},
       host: {value: ''},
       port: {value: 6053, validate: RED.validators.number()},
-      reconnect: {value: 15, validate: RED.validators.number()},
+      reconnect: {value: 60, validate: RED.validators.number()},
+      pingInterval: {value: 60, validate: RED.validators.number()},
       loglevel: {value: '0'},
       logdump: {value: false},
       ble: {value: false}
@@ -142,7 +143,12 @@
 
   <div class="form-row">
     <label for="node-config-input-reconnect"><i class="fa fa-refresh"></i> Reconnect</label>
-    <input type="text" id="node-config-input-reconnect" placeholder="15 sec" />
+    <input type="text" id="node-config-input-reconnect" placeholder="60 sec" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-config-input-pingInterval"><i class="fa fa-pulse"></i> Ping Interval</label>
+    <input type="text" id="node-config-input-pingInterval" placeholder="60 sec" />
   </div>
 
   <div class="form-row">

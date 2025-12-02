@@ -31,6 +31,20 @@ api:
 
 See [ESPHome documentation on api configuration](https://esphome.io/components/api.html) for more information.
 
+## Network Optimization
+
+⚠️ **Important**: To reduce network traffic and avoid "network spam":
+
+1. **Increase ping intervals**: Set "Ping Interval" to 60+ seconds for stable networks
+2. **Increase reconnect intervals**: Set "Reconnect" to 60+ seconds to reduce reconnection attempts
+3. **Limit concurrent devices**: Don't connect to too many ESPHome devices simultaneously
+4. **Monitor logs**: Check Node-RED logs for connection issues and adjust settings accordingly
+
+### Recommended Settings for Network-Friendly Operation:
+- **Ping Interval**: 60-120 seconds (default: 60)
+- **Reconnect Interval**: 60-120 seconds (default: 60)
+- **Log Level**: ERROR or WARN (avoid DEBUG/VERBOSE in production)
+
 ## Installation
 
 ```bash

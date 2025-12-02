@@ -25,8 +25,15 @@ module.exports = (RED) => {
             self.emit('onStatus', string);
             self.emit('onState', { key: 'status', state: string });
         };
+        // Rate limiting for state updates
+        let lastStateTime = 0;
+        const minStateInterval = 100; // minimum 100ms between state updates
         self.onState = function (object) {
-            self.emit('onState', object);
+            const now = Date.now();
+            if (now - lastStateTime >= minStateInterval) {
+                lastStateTime = now;
+                self.emit('onState', object);
+            }
         };
         self.onBle = function (object) {
             self.emit('onBle', object);
@@ -39,8 +46,8 @@ module.exports = (RED) => {
             initializeListEntities: true,
             initializeSubscribeStates: true,
             reconnect: true,
-            reconnectInterval: ((config === null || config === void 0 ? void 0 : config.reconnect) || 15) * 1000,
-            pingInterval: 15 * 1000,
+            reconnectInterval: ((config === null || config === void 0 ? void 0 : config.reconnect) || 60) * 1000,
+            pingInterval: ((config === null || config === void 0 ? void 0 : config.pingInterval) || 60) * 1000,
             initializeSubscribeBLEAdvertisements: self.ble
         };
         if (self.credentials.encryptionkey) {
@@ -65,10 +72,15 @@ module.exports = (RED) => {
             return;
         }
         self.client.on('error', (e) => {
-            self.error(e.message);
+            // Avoid spam logging the same error
+            if (self.lastError !== e.message) {
+                self.error(e.message);
+                self.lastError = e.message;
+            }
             self.onStatus('error');
         });
         self.client.on('disconnected', () => {
+            self.lastError = null; // Reset error state on disconnect
             self.onStatus('disconnected');
         });
         self.client.on('connected', () => {
