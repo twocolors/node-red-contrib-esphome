@@ -62,20 +62,64 @@ module.exports = (RED) => {
                     dumpConfig: config.logdump
                 } });
         }
-        self.client = new Client(options);
+        // Validate encryption key format if provided
+        if (self.credentials.encryptionkey) {
+            const key = self.credentials.encryptionkey;
+            if (typeof key !== 'string' || key.length === 0) {
+                self.error('Invalid encryption key format');
+                self.onStatus('error');
+                return;
+            }
+        }
+        let client;
         try {
-            self.client.connect();
-            self.client.connection.setMaxListeners(0);
+            self.client = new Client(options);
+            client = self.client;
         }
         catch (e) {
-            self.error(e.message);
+            self.error(`Failed to create ESPHome client: ${e.message}`);
+            self.onStatus('error');
+            return;
+        }
+        try {
+            self.client.connect();
+            if (self.client.connection && self.client.connection.setMaxListeners) {
+                self.client.connection.setMaxListeners(0);
+            }
+        }
+        catch (e) {
+            self.error(`Connection failed: ${e.message}`);
+            self.onStatus('error');
             return;
         }
         self.client.on('error', (e) => {
-            // Avoid spam logging the same error
-            if (self.lastError !== e.message) {
-                self.error(e.message);
-                self.lastError = e.message;
+            const errorMessage = e.message || 'Unknown error';
+            // Handle specific authentication errors
+            if (errorMessage.includes('auth') || errorMessage.includes('encryption') ||
+                errorMessage.includes('password') || errorMessage.includes('key') ||
+                errorMessage.includes('Invalid encryption key') || errorMessage.includes('Authentication failed')) {
+                self.error(`Authentication failed - check encryption key/password: ${errorMessage}`);
+                self.onStatus('error');
+                // Safely disconnect on authentication errors to prevent crashes
+                try {
+                    if (self.client && typeof self.client.disconnect === 'function') {
+                        self.client.disconnect();
+                    }
+                }
+                catch (disconnectError) {
+                    // Ignore disconnect errors
+                }
+                return;
+            }
+            if (errorMessage.includes('connect') || errorMessage.includes('timeout')) {
+                self.error(`Connection failed: ${errorMessage}`);
+            }
+            else {
+                // Avoid spam logging the same error
+                if (self.lastError !== errorMessage) {
+                    self.error(`ESPHome error: ${errorMessage}`);
+                    self.lastError = errorMessage;
+                }
             }
             self.onStatus('error');
         });
@@ -143,7 +187,14 @@ module.exports = (RED) => {
             self.onBle(Object.assign({ key: 'ble' }, payload));
         });
         self.on('close', () => {
-            self.client.disconnect();
+            try {
+                if (self.client && typeof self.client.disconnect === 'function') {
+                    self.client.disconnect();
+                }
+            }
+            catch (e) {
+                // Ignore disconnect errors during close to prevent crashes
+            }
         });
     }, {
         credentials: {
