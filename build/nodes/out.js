@@ -60,7 +60,7 @@ module.exports = (RED) => {
             const payload = msg.payload;
             let text;
             if (typeof payload.state !== 'undefined' && typeof payload.state !== 'object') {
-                if (entity.config.accuracyDecimals >= 0) {
+                if (entity.config && entity.config.accuracyDecimals >= 0) {
                     text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
                 }
                 else {
@@ -71,7 +71,7 @@ module.exports = (RED) => {
                 if (typeof payload !== 'undefined' && typeof payload === 'object') {
                     text = 'json';
                 }
-                else if (entity.config.accuracyDecimals >= 0) {
+                else if (entity.config && entity.config.accuracyDecimals >= 0) {
                     text = String((0, utils_1.roundToX)(payload, entity.config.accuracyDecimals));
                 }
                 else {
@@ -81,7 +81,7 @@ module.exports = (RED) => {
             if (text && text.length > 32) {
                 text = `${text.substring(0, 32)}...`;
             }
-            if (text && entity.config.unitOfMeasurement) {
+            if (text && entity.config && entity.config.unitOfMeasurement) {
                 text = `${text} ${entity.config.unitOfMeasurement}`;
             }
             try {

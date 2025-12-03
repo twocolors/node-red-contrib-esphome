@@ -50,7 +50,7 @@ module.exports = (RED) => {
                 if (typeof payload.state === 'object') {
                     text = 'json';
                 }
-                else if (entity.config.accuracyDecimals >= 0) {
+                else if (entity.config && entity.config.accuracyDecimals >= 0) {
                     text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
                 }
                 else {
@@ -59,7 +59,7 @@ module.exports = (RED) => {
                 if (text && text.length > 32) {
                     text = `${text.substring(0, 32)}...`;
                 }
-                if (entity.config.unitOfMeasurement) {
+                if (entity.config && entity.config.unitOfMeasurement) {
                     text = `${text} ${entity.config.unitOfMeasurement}`;
                 }
             }
