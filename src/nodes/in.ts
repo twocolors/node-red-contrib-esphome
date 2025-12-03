@@ -11,14 +11,26 @@ module.exports = (RED: NodeAPI) => {
 
     // system
     self.text_status = undefined;
+    self.lastStateTime = {};
+    self.stateThrottleInterval = config.stateThrottleInterval || 100; // minimum ms between same entity states
 
     try {
       self.deviceNode = RED.nodes.getNode(config.device);
-    } catch (_) {
-      /* empty */
+    } catch (e: any) {
+      self.error(`Failed to get device node: ${e.message}`);
+      self.status({fill: 'red', shape: 'ring', text: 'device error'});
+      return;
     }
 
-    if (!self.deviceNode || !config.entity) {
+    if (!self.deviceNode) {
+      self.error('Device node not found or not configured');
+      self.status({fill: 'red', shape: 'ring', text: 'no device'});
+      return;
+    }
+    
+    if (!config.entity) {
+      self.error('Entity not configured');
+      self.status({fill: 'red', shape: 'ring', text: 'no entity'});
       return;
     }
 
@@ -43,6 +55,16 @@ module.exports = (RED: NodeAPI) => {
     };
 
     const onState = (state: any) => {
+      const now = Date.now();
+      const entityKey = state.key;
+      
+      // Throttle state updates per entity
+      if (self.lastStateTime[entityKey] && (now - self.lastStateTime[entityKey]) < self.stateThrottleInterval) {
+        return; // Skip this update
+      }
+      
+      self.lastStateTime[entityKey] = now;
+      
       const payload: any = {...state};
       const topic: any = self.config.topic === undefined ? '' : self.config.topic;
 
@@ -98,19 +120,51 @@ module.exports = (RED: NodeAPI) => {
       setStatus(Status[status as string]);
     };
 
-    self.onState = (state: any) => onState(state);
-    self.deviceNode.on('onState', self.onState);
+    self.onState = (state: any) => {
+      try {
+        onState(state);
+      } catch (e: any) {
+        self.error(`State processing error: ${e.message}`);
+      }
+    };
+    
+    self.onBle = (data: any) => {
+      try {
+        onBle(data);
+      } catch (e: any) {
+        self.error(`BLE processing error: ${e.message}`);
+      }
+    };
+    
+    self.onStatus = (status: string) => {
+      try {
+        onStatus(status);
+      } catch (e: any) {
+        self.error(`Status processing error: ${e.message}`);
+      }
+    };
 
-    self.onBle = (data: any) => onBle(data);
-    self.deviceNode.on('onBle', self.onBle);
-
-    self.onStatus = (status: string) => onStatus(status);
-    self.deviceNode.on('onStatus', self.onStatus);
+    // Safely add event listeners
+    try {
+      if (self.deviceNode && typeof self.deviceNode.on === 'function') {
+        self.deviceNode.on('onState', self.onState);
+        self.deviceNode.on('onBle', self.onBle);
+        self.deviceNode.on('onStatus', self.onStatus);
+      }
+    } catch (e: any) {
+      self.error(`Failed to attach event listeners: ${e.message}`);
+    }
 
     self.on('close', (_: any, done: () => any) => {
-      self.deviceNode.removeListener('onState', self.onState);
-      self.deviceNode.removeListener('onBle', self.onBle);
-      self.deviceNode.removeListener('onStatus', self.onStatus);
+      try {
+        if (self.deviceNode && typeof self.deviceNode.removeListener === 'function') {
+          self.deviceNode.removeListener('onState', self.onState);
+          self.deviceNode.removeListener('onBle', self.onBle);
+          self.deviceNode.removeListener('onStatus', self.onStatus);
+        }
+      } catch (e: any) {
+        // Ignore cleanup errors to prevent crashes during shutdown
+      }
       done();
     });
   });
