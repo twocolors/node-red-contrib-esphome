@@ -31,6 +31,26 @@ api:
 
 See [ESPHome documentation on api configuration](https://esphome.io/components/api.html) for more information.
 
+## Network Optimization
+
+⚠️ **Important**: To reduce network traffic and avoid "network spam":
+
+1. **Optimized keepalive**: Default "Ping Interval" is set to 20 seconds for stable operation
+2. **Auto-calculated reconnect**: Reconnect interval automatically calculated as 4.5× ping interval (90 seconds by default)
+3. **Enhanced stability**: Added crash protection for invalid encryption keys
+4. **Rate limiting**: State updates are throttled to prevent spam
+5. **Monitor logs**: Check Node-RED logs for connection issues and adjust settings accordingly
+
+### Recommended Settings for Network-Friendly Operation:
+- **Ping Interval**: 20-60 seconds (default: 20)
+- **Reconnect Interval**: Auto-calculated (4.5× ping interval, default: 90)
+- **Log Level**: ERROR or WARN (avoid DEBUG/VERBOSE in production)
+
+### New Features:
+- **Crash Protection**: Invalid encryption keys no longer crash Node-RED
+- **Rate Limiting**: State changes throttled to maximum 10Hz (100ms intervals)
+- **ESPHome Compliance**: Timing follows ESPHome native API standards
+
 ## Installation
 
 ```bash

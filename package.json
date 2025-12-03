@@ -23,7 +23,7 @@
     "version": ">=2.2.0",
     "nodes": {
       "api": "build/nodes/api.js",
-      "device": "build/nodes/device.js",
+      "device": "build/nodes/device.js", 
       "in": "build/nodes/in.js",
       "out": "build/nodes/out.js"
     }

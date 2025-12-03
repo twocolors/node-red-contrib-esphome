@@ -25,12 +25,25 @@ module.exports = (RED) => {
             self.emit('onStatus', string);
             self.emit('onState', { key: 'status', state: string });
         };
+        // Rate limiting for state updates
+        let lastStateTime = 0;
+        const minStateInterval = 100; // minimum 100ms between state updates
         self.onState = function (object) {
-            self.emit('onState', object);
+            const now = Date.now();
+            if (now - lastStateTime >= minStateInterval) {
+                lastStateTime = now;
+                self.emit('onState', object);
+            }
         };
         self.onBle = function (object) {
             self.emit('onBle', object);
         };
+        // ESPHome keepalive configuration - use default if empty, undefined, or invalid
+        const pingInterval = ((config === null || config === void 0 ? void 0 : config.pingInterval) && config.pingInterval > 0) ? config.pingInterval : 20; // seconds
+        const keepalive_ratio = 4.5;
+        // Use manual reconnect value if set and not empty, otherwise auto-calculate
+        const hasManualReconnect = (config === null || config === void 0 ? void 0 : config.reconnect) !== undefined && (config === null || config === void 0 ? void 0 : config.reconnect) !== null && (config === null || config === void 0 ? void 0 : config.reconnect) !== '' && (config === null || config === void 0 ? void 0 : config.reconnect) > 0;
+        const reconnectInterval = hasManualReconnect ? config.reconnect : pingInterval * keepalive_ratio;
         let options = {
             host: config.host,
             port: config.port,
@@ -39,8 +52,8 @@ module.exports = (RED) => {
             initializeListEntities: true,
             initializeSubscribeStates: true,
             reconnect: true,
-            reconnectInterval: ((config === null || config === void 0 ? void 0 : config.reconnect) || 15) * 1000,
-            pingInterval: 15 * 1000,
+            reconnectInterval: reconnectInterval * 1000,
+            pingInterval: pingInterval * 1000,
             initializeSubscribeBLEAdvertisements: self.ble
         };
         if (self.credentials.encryptionkey) {
@@ -55,20 +68,69 @@ module.exports = (RED) => {
                     dumpConfig: config.logdump
                 } });
         }
-        self.client = new Client(options);
+        // Validate encryption key format if provided
+        if (self.credentials.encryptionkey) {
+            const key = self.credentials.encryptionkey;
+            if (typeof key !== 'string' || key.length === 0) {
+                self.error('Invalid encryption key format');
+                self.onStatus('error');
+                return;
+            }
+        }
+        let client;
         try {
-            self.client.connect();
-            self.client.connection.setMaxListeners(0);
+            self.client = new Client(options);
+            client = self.client;
         }
         catch (e) {
-            self.error(e.message);
+            self.error(`Failed to create ESPHome client: ${e.message}`);
+            self.onStatus('error');
+            return;
+        }
+        try {
+            self.client.connect();
+            if (self.client.connection && self.client.connection.setMaxListeners) {
+                self.client.connection.setMaxListeners(0);
+            }
+        }
+        catch (e) {
+            self.error(`Connection failed: ${e.message}`);
+            self.onStatus('error');
             return;
         }
         self.client.on('error', (e) => {
-            self.error(e.message);
+            const errorMessage = e.message || 'Unknown error';
+            // Handle specific authentication errors
+            if (errorMessage.includes('auth') || errorMessage.includes('encryption') ||
+                errorMessage.includes('password') || errorMessage.includes('key') ||
+                errorMessage.includes('Invalid encryption key') || errorMessage.includes('Authentication failed')) {
+                self.error(`Authentication failed - check encryption key/password: ${errorMessage}`);
+                self.onStatus('error');
+                // Safely disconnect on authentication errors to prevent crashes
+                try {
+                    if (self.client && typeof self.client.disconnect === 'function') {
+                        self.client.disconnect();
+                    }
+                }
+                catch (disconnectError) {
+                    // Ignore disconnect errors
+                }
+                return;
+            }
+            if (errorMessage.includes('connect') || errorMessage.includes('timeout')) {
+                self.error(`Connection failed: ${errorMessage}`);
+            }
+            else {
+                // Avoid spam logging the same error
+                if (self.lastError !== errorMessage) {
+                    self.error(`ESPHome error: ${errorMessage}`);
+                    self.lastError = errorMessage;
+                }
+            }
             self.onStatus('error');
         });
         self.client.on('disconnected', () => {
+            self.lastError = null; // Reset error state on disconnect
             self.onStatus('disconnected');
         });
         self.client.on('connected', () => {
@@ -131,7 +193,14 @@ module.exports = (RED) => {
             self.onBle(Object.assign({ key: 'ble' }, payload));
         });
         self.on('close', () => {
-            self.client.disconnect();
+            try {
+                if (self.client && typeof self.client.disconnect === 'function') {
+                    self.client.disconnect();
+                }
+            }
+            catch (e) {
+                // Ignore disconnect errors during close to prevent crashes
+            }
         });
     }, {
         credentials: {

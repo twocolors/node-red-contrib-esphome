@@ -5,7 +5,8 @@
       name: {},
       host: {value: ''},
       port: {value: 6053, validate: RED.validators.number()},
-      reconnect: {value: 15, validate: RED.validators.number()},
+      reconnect: {value: '', validate: function(v) { return v === '' || (RED.validators.number()(v) && parseFloat(v) > 0); }},
+      pingInterval: {value: 20, validate: function(v) { return v === '' || v === undefined || (RED.validators.number()(v) && parseFloat(v) > 0); }},
       loglevel: {value: '0'},
       logdump: {value: false},
       ble: {value: false}
@@ -20,6 +21,36 @@
     },
     oneditprepare: function () {
       let node = this;
+
+      // ESPHome keepalive configuration
+      const KEEPALIVE_RATIO = 4.5;
+      
+      // Auto-calculate reconnect based on ping interval (keepalive)
+      function updateReconnectTime() {
+        const keepalive = parseInt($('#node-config-input-pingInterval').val()) || 20;
+        const autoReconnect = Math.round(keepalive * KEEPALIVE_RATIO);
+        
+        // Check if reconnect field is empty or just whitespace
+        const currentReconnect = $('#node-config-input-reconnect').val();
+        const isEmpty = !currentReconnect || currentReconnect.trim() === '';
+        
+        if (isEmpty) {
+          $('#node-config-input-reconnect').attr('placeholder', `${autoReconnect} sec (4.5×ping auto)`);
+        } else {
+          $('#node-config-input-reconnect').attr('placeholder', `manual: ${currentReconnect} sec`);
+        }
+      }
+
+      // Monitor reconnect field for changes to update placeholder
+      $('#node-config-input-reconnect').on('input keyup', function() {
+        updateReconnectTime();
+      });
+
+      // Update reconnect when keepalive (ping) changes
+      $('#node-config-input-pingInterval').on('change keyup', updateReconnectTime);
+      
+      // Initialize on load
+      setTimeout(updateReconnectTime, 100);
 
       function toggleSelect() {
         let $val = $('#node-config-input-host').val();
@@ -141,9 +172,15 @@
   </div>
 
   <div class="form-row">
-    <label for="node-config-input-reconnect"><i class="fa fa-refresh"></i> Reconnect</label>
-    <input type="text" id="node-config-input-reconnect" placeholder="15 sec" />
+    <label for="node-config-input-pingInterval"><i class="fa fa-pulse"></i> Ping Interval</label>
+    <input type="text" id="node-config-input-pingInterval" placeholder="20 sec" />
   </div>
+
+  <div class="form-row">
+    <label for="node-config-input-reconnect"><i class="fa fa-refresh"></i> Reconnect</label>
+    <input type="text" id="node-config-input-reconnect" placeholder="auto (4.5× Ping Interval) or manual" />
+  </div>
+
 
   <div class="form-row">
     <label for="node-config-input-loglevel"><i class="fa fa-file-o"></i> Log Level</label>
@@ -200,8 +237,8 @@
     <dd>encryption key for API</dd>
     <dt class="required">Password<span class="property-type">password</span></dt>
     <dd>password for API</dd>
-    <dt class="required">Reconnect<span class="property-type">number</span></dt>
-    <dd>Reconnect interval in seconds (Default: 15)</dd>
+    <dt>Reconnect<span class="property-type">number</span></dt>
+    <dd>Reconnect interval in seconds (leave empty for auto: 4.5×ping, or set manually)</dd>
     <dt class="required">Log Level<span class="property-type">number</span></dt>
     <dd>possible log levels</dd>
     <dt class="required">Dump Config<span class="property-type">true|false</span></dt>
