@@ -42,8 +42,11 @@ module.exports = (RED) => {
             const topic = config.topic === undefined ? '' : config.topic;
             // All Entities
             let stateEntity = config.entity;
-            if (stateEntity === 'all-entities') {
-                stateEntity = payload.key;
+            if (config.entity === 'all-entities') {
+                const system = self.deviceNode.entities.find((e) => e.key == payload.key);
+                if (system && system.type !== 'Systems') {
+                    stateEntity = payload.key;
+                }
             }
             if (payload.key != stateEntity) {
                 return;
@@ -70,7 +73,7 @@ module.exports = (RED) => {
                     text = `${text} ${entity.config.unitOfMeasurement}`;
                 }
             }
-            self.text_status = text;
+            text = config.entity === 'all-entities' ? 'Entities' : text;
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             self.send({
                 topic: topic,
@@ -88,7 +91,7 @@ module.exports = (RED) => {
                 return;
             }
             delete payload.key;
-            setStatus({ fill: 'blue', shape: 'dot', text: 'ble' }, 3000);
+            setStatus({ fill: 'blue', shape: 'dot', text: 'BLE' }, 3000);
             const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
             self.send({
                 payload: payload,

@@ -48,8 +48,11 @@ module.exports = (RED: NodeAPI) => {
 
       // All Entities
       let stateEntity = config.entity;
-      if (stateEntity === 'all-entities') {
-        stateEntity = payload.key;
+      if (config.entity === 'all-entities') {
+        const system: any = self.deviceNode.entities.find((e: any) => e.key == payload.key);
+        if (system && system.type !== 'Systems') {
+          stateEntity = payload.key;
+        }
       }
 
       if (payload.key != stateEntity) {
@@ -80,7 +83,7 @@ module.exports = (RED: NodeAPI) => {
         }
       }
 
-      self.text_status = text;
+      text = config.entity === 'all-entities' ? 'Entities' : text;
       setStatus({fill: 'yellow', shape: 'dot', text: text}, 3000);
 
       self.send({
@@ -104,7 +107,7 @@ module.exports = (RED: NodeAPI) => {
 
       delete payload.key;
 
-      setStatus({fill: 'blue', shape: 'dot', text: 'ble'}, 3000);
+      setStatus({fill: 'blue', shape: 'dot', text: 'BLE'}, 3000);
 
       const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
 
