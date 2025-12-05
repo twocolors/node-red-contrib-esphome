@@ -123,6 +123,15 @@ module.exports = (RED: NodeAPI) => {
           type: 'Systems',
           name: 'Status'
         });
+        // all entities to entities
+        self.entities.push({
+          key: 'all-entities',
+          type: 'Systems',
+          name: 'Entities',
+          config: {
+            deviceClass: 'All'
+          }
+        });
 
         self.onStatus('connecting');
       });

@@ -49,7 +49,7 @@ module.exports = (RED: NodeAPI) => {
       }
 
       const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
-      const regexpEntity = /^(Logs|BLE|Status)$/gi;
+      const regexpEntity = /^(Logs|BLE|Status|Entities)$/gi;
       if (entity.type.match(regexpType) || config.entity.match(regexpEntity)) {
         done();
         return;

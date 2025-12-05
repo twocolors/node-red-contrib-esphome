@@ -46,13 +46,19 @@ module.exports = (RED: NodeAPI) => {
       const payload: any = {...state};
       const topic: any = config.topic === undefined ? '' : config.topic;
 
-      if (payload.key != config.entity) {
+      // All Entities
+      let stateEntity = config.entity;
+      if (stateEntity === 'all-entities') {
+        stateEntity = payload.key;
+      }
+
+      if (payload.key != stateEntity) {
         return;
       }
 
       delete payload.key;
 
-      const entity: any = self.deviceNode.entities.find((e: any) => e.key == config.entity);
+      const entity: any = self.deviceNode.entities.find((e: any) => e.key == stateEntity);
 
       let text: string = '';
       if (typeof payload.state !== 'undefined') {
