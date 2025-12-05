@@ -39,8 +39,8 @@ module.exports = (RED) => {
             initializeListEntities: true,
             initializeSubscribeStates: true,
             reconnect: true,
-            reconnectInterval: (Number((config === null || config === void 0 ? void 0 : config.reconnect) || 90)) * 1000,
-            pingInterval: (Number((config === null || config === void 0 ? void 0 : config.ping) || 20)) * 1000,
+            reconnectInterval: ((config === null || config === void 0 ? void 0 : config.reconnect) || 90) * 1000,
+            pingInterval: ((config === null || config === void 0 ? void 0 : config.ping) || 20) * 1000,
             initializeSubscribeBLEAdvertisements: self.ble
         };
         if (self.credentials.encryptionkey) {
