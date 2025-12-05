@@ -49,8 +49,8 @@ module.exports = (RED: NodeAPI) => {
         initializeListEntities: true,
         initializeSubscribeStates: true,
         reconnect: true,
-        reconnectInterval: (config?.reconnect || 15) * 1000,
-        pingInterval: 15 * 1000,
+        reconnectInterval: (config?.reconnect || 90) * 1000,
+        pingInterval: (config?.ping || 20) * 1000,
         initializeSubscribeBLEAdvertisements: self.ble
       };
 

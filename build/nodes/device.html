@@ -5,7 +5,8 @@
       name: {},
       host: {value: ''},
       port: {value: 6053, validate: RED.validators.number()},
-      reconnect: {value: 15, validate: RED.validators.number()},
+      ping: {value: 20, validate: RED.validators.number()},
+      reconnect: {value: 90, validate: RED.validators.number()},
       loglevel: {value: '0'},
       logdump: {value: false},
       ble: {value: false}
@@ -20,6 +21,15 @@
     },
     oneditprepare: function () {
       let node = this;
+
+      let $ping = $('#node-config-input-ping').val();
+      let $reconnect = $('#node-config-input-reconnect').val();
+      if (!$ping) {
+        $('#node-config-input-ping').val('20');
+      }
+      if (!$reconnect) {
+        $('#node-config-input-reconnect').val('90');
+      }
 
       function toggleSelect() {
         let $val = $('#node-config-input-host').val();
@@ -141,8 +151,13 @@
   </div>
 
   <div class="form-row">
+    <label for="node-config-input-ping"><i class="fa fa-heartbeat"></i> Ping</label>
+    <input type="text" id="node-config-input-ping" placeholder="20 sec" />
+  </div>
+
+  <div class="form-row">
     <label for="node-config-input-reconnect"><i class="fa fa-refresh"></i> Reconnect</label>
-    <input type="text" id="node-config-input-reconnect" placeholder="15 sec" />
+    <input type="text" id="node-config-input-reconnect" placeholder="90 sec" />
   </div>
 
   <div class="form-row">
@@ -200,8 +215,10 @@
     <dd>encryption key for API</dd>
     <dt class="required">Password<span class="property-type">password</span></dt>
     <dd>password for API</dd>
+    <dt class="required">Ping<span class="property-type">number</span></dt>
+    <dd>Ping interval in seconds (Default: 20)</dd>
     <dt class="required">Reconnect<span class="property-type">number</span></dt>
-    <dd>Reconnect interval in seconds (Default: 15)</dd>
+    <dd>Reconnect interval in seconds (Default: 90)</dd>
     <dt class="required">Log Level<span class="property-type">number</span></dt>
     <dd>possible log levels</dd>
     <dt class="required">Dump Config<span class="property-type">true|false</span></dt>
