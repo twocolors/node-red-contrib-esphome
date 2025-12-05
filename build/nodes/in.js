@@ -39,27 +39,34 @@ module.exports = (RED) => {
         };
         const onState = (state) => {
             const payload = Object.assign({}, state);
-            const topic = self.config.topic === undefined ? '' : self.config.topic;
-            if (payload.key != config.entity) {
+            const topic = config.topic === undefined ? '' : config.topic;
+            // All Entities
+            let stateEntity = config.entity;
+            if (stateEntity === 'all-entities') {
+                stateEntity = payload.key;
+            }
+            if (payload.key != stateEntity) {
                 return;
             }
             delete payload.key;
-            const entity = self.deviceNode.entities.find((e) => e.key == config.entity);
+            const entity = self.deviceNode.entities.find((e) => e.key == stateEntity);
             let text = '';
             if (typeof payload.state !== 'undefined') {
                 if (typeof payload.state === 'object') {
                     text = 'json';
                 }
-                else if (entity.config && entity.config.accuracyDecimals >= 0) {
-                    text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
-                }
                 else {
-                    text = String(payload.state);
+                    if (entity.config && entity.config.accuracyDecimals >= 0) {
+                        text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
+                    }
+                    else {
+                        text = String(payload.state);
+                    }
                 }
                 if (text && text.length > 32) {
                     text = `${text.substring(0, 32)}...`;
                 }
-                if (entity.config && entity.config.unitOfMeasurement) {
+                if (text && entity.config && entity.config.unitOfMeasurement) {
                     text = `${text} ${entity.config.unitOfMeasurement}`;
                 }
             }

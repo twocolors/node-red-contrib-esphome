@@ -52,7 +52,7 @@ module.exports = (RED) => {
                 return;
             }
             const regexpType = /^(BinarySensor|Sensor|TextSensor)$/gi;
-            const regexpEntity = /^(Logs|BLE|Status)$/gi;
+            const regexpEntity = /^(Logs|BLE|Status|Entities)$/gi;
             if (entity.type.match(regexpType) || config.entity.match(regexpEntity)) {
                 done();
                 return;
@@ -71,11 +71,13 @@ module.exports = (RED) => {
                 if (typeof payload !== 'undefined' && typeof payload === 'object') {
                     text = 'json';
                 }
-                else if (entity.config && entity.config.accuracyDecimals >= 0) {
-                    text = String((0, utils_1.roundToX)(payload, entity.config.accuracyDecimals));
-                }
                 else {
-                    text = String(payload);
+                    if (entity.config && entity.config.accuracyDecimals >= 0) {
+                        text = String((0, utils_1.roundToX)(payload, entity.config.accuracyDecimals));
+                    }
+                    else {
+                        text = String(payload);
+                    }
                 }
             }
             if (text && text.length > 32) {

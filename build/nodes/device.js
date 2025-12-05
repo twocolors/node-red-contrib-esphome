@@ -39,8 +39,8 @@ module.exports = (RED) => {
             initializeListEntities: true,
             initializeSubscribeStates: true,
             reconnect: true,
-            reconnectInterval: ((config === null || config === void 0 ? void 0 : config.reconnect) || 15) * 1000,
-            pingInterval: 15 * 1000,
+            reconnectInterval: (Number((config === null || config === void 0 ? void 0 : config.reconnect) || 90)) * 1000,
+            pingInterval: (Number((config === null || config === void 0 ? void 0 : config.ping) || 20)) * 1000,
             initializeSubscribeBLEAdvertisements: self.ble
         };
         if (self.credentials.encryptionkey) {
@@ -98,6 +98,15 @@ module.exports = (RED) => {
                 key: 'status',
                 type: 'Systems',
                 name: 'Status'
+            });
+            // all entities to entities
+            self.entities.push({
+                key: 'all-entities',
+                type: 'Systems',
+                name: 'Entities',
+                config: {
+                    deviceClass: 'All'
+                }
             });
             self.onStatus('connecting');
         });

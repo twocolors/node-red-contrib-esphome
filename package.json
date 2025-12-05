@@ -20,7 +20,7 @@
     "prettier": "prettier --write \"**/*.{js,ts}\""
   },
   "node-red": {
-    "version": ">=2.2.0",
+    "version": ">=4.0.0",
     "nodes": {
       "api": "build/nodes/api.js",
       "device": "build/nodes/device.js",
@@ -44,7 +44,7 @@
     "typescript": "^5.0.2"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18.5"
   },
   "keywords": [
     "node-red",
@@ -54,5 +54,10 @@
     "esp32",
     "esp8266",
     "iot"
+  ],
+  "files": [
+    "LICENSE",
+    "build",
+    "examples"
   ]
 }
