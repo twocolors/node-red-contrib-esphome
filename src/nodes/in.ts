@@ -57,17 +57,19 @@ module.exports = (RED: NodeAPI) => {
       let text: string = '';
       if (typeof payload.state !== 'undefined') {
         if (typeof payload.state === 'object') {
-          text = 'json';        
-        } else if (entity.config && entity.config.accuracyDecimals >= 0) {
-          text = String(roundToX(payload.state, entity.config.accuracyDecimals));
+          text = 'json';
         } else {
-          text = String(payload.state);
+          if (entity.config && entity.config.accuracyDecimals >= 0) {
+            text = String(roundToX(payload.state, entity.config.accuracyDecimals));
+          } else {
+            text = String(payload.state);
+          }
         }
 
         if (text && text.length > 32) {
           text = `${text.substring(0, 32)}...`;
         }
-        if (entity.config && entity.config.unitOfMeasurement) {
+        if (text && entity.config && entity.config.unitOfMeasurement) {
           text = `${text} ${entity.config.unitOfMeasurement}`;
         }
       }

@@ -66,10 +66,12 @@ module.exports = (RED: NodeAPI) => {
       } else {
         if (typeof payload !== 'undefined' && typeof payload === 'object') {
           text = 'json';
-        } else if (entity.config && entity.config.accuracyDecimals >= 0) {
-          text = String(roundToX(payload, entity.config.accuracyDecimals));
         } else {
-          text = String(payload);
+          if (entity.config && entity.config.accuracyDecimals >= 0) {
+            text = String(roundToX(payload, entity.config.accuracyDecimals));
+          } else {
+            text = String(payload);
+          }
         }
       }
       if (text && text.length > 32) {
