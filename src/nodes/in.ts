@@ -44,7 +44,7 @@ module.exports = (RED: NodeAPI) => {
 
     const onState = (state: any) => {
       const payload: any = {...state};
-      const topic: any = self.config.topic === undefined ? '' : self.config.topic;
+      const topic: any = config.topic === undefined ? '' : config.topic;
 
       if (payload.key != config.entity) {
         return;
