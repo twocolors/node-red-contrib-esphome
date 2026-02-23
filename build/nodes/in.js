@@ -73,7 +73,7 @@ module.exports = (RED) => {
                     text = `${text} ${entity.config.unitOfMeasurement}`;
                 }
             }
-            text = config.entity === 'all-entities' ? 'Entities' : text;
+            text = config.entity === 'all-entities' ? 'All Entities' : text;
             setStatus({ fill: 'yellow', shape: 'dot', text: text }, 3000);
             self.send({
                 topic: topic,
