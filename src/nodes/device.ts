@@ -82,12 +82,16 @@ module.exports = (RED: NodeAPI) => {
         self.client.connect();
         self.client.connection.setMaxListeners(0);
       } catch (e: any) {
-        self.error(e.message);
+        if (!config.suppressErrors) {
+          self.error(e.message);
+        }
         return;
       }
 
       self.client.on('error', (e: Error) => {
-        self.error(e.message);
+        if (!config.suppressErrors) {
+          self.error(e.message);
+        }
         self.onStatus('error');
       });
 
