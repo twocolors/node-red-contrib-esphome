@@ -7,6 +7,7 @@
       port: {value: 6053, validate: RED.validators.number()},
       ping: {value: 20, validate: RED.validators.number()},
       reconnect: {value: 90, validate: RED.validators.number()},
+      suppressErrors: {value: false},
       loglevel: {value: '0'},
       logdump: {value: false},
       ble: {value: false}
@@ -161,6 +162,18 @@
   </div>
 
   <div class="form-row">
+    <label for="node-config-input-suppressErrors"><i class="fa fa-bell-slash"></i> Errors</label>
+    <label for="node-config-input-suppressErrors" style="width:70%">
+      <input
+        type="checkbox"
+        id="node-config-input-suppressErrors"
+        style="display:inline-block; width:22px; vertical-align:top;"
+        autocomplete="off"
+      /><span>suppress errors</span>
+    </label>
+  </div>
+
+  <div class="form-row">
     <label for="node-config-input-loglevel"><i class="fa fa-file-o"></i> Log Level</label>
     <select id="node-config-input-loglevel" style="width: 70%;">
       <option value="0">NONE</option>
@@ -219,6 +232,8 @@
     <dd>Ping interval in seconds (Default: 20)</dd>
     <dt class="required">Reconnect<span class="property-type">number</span></dt>
     <dd>Reconnect interval in seconds (Default: 90)</dd>
+    <dt class="required">Suppress Errors<span class="property-type">true|false</span></dt>
+    <dd>suppress errors</dd>
     <dt class="required">Log Level<span class="property-type">number</span></dt>
     <dd>possible log levels</dd>
     <dt class="required">Dump Config<span class="property-type">true|false</span></dt>

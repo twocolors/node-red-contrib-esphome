@@ -61,11 +61,15 @@ module.exports = (RED) => {
             self.client.connection.setMaxListeners(0);
         }
         catch (e) {
-            self.error(e.message);
+            if (!config.suppressErrors) {
+                self.error(e.message);
+            }
             return;
         }
         self.client.on('error', (e) => {
-            self.error(e.message);
+            if (!config.suppressErrors) {
+                self.error(e.message);
+            }
             self.onStatus('error');
         });
         self.client.on('disconnected', () => {
