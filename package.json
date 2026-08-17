@@ -44,7 +44,7 @@
     "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">=18.5"
+    "node": ">=22.9"
   },
   "keywords": [
     "node-red",
