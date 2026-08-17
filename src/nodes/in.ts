@@ -98,10 +98,12 @@ module.exports = (RED: NodeAPI) => {
       let address: string = config.bleaddress;
       const payload: any = {...data};
 
-      address = address.toLowerCase().replace(/[^a-f0-9]/g, '');
+      const macs: Set<string> = new Set(
+        address.split(/\s|;|,/).map((mac: string) => mac.toLowerCase().replace(/[^a-f0-9]/g, ''))
+      );
       payload.address = payload.address.toString(16);
 
-      if (payload.address != address) {
+      if (!macs.has(payload.address)) {
         return;
       }
 
