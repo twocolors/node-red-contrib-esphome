@@ -1,0 +1,77 @@
+[
+    {
+        "id": "eff96b92be329792",
+        "type": "esphome-in",
+        "z": "00a4d4247dbe7864",
+        "name": "BLE",
+        "device": "8f2238c08f0690b9",
+        "entity": "ble",
+        "topic": "",
+        "bleaddress": "A4:C1:38:C8:66:2D A4:C1:38:CF:73:04 A4:C1:38:5A:5B:DC",
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "e90184ce56483dc2"
+            ]
+        ]
+    },
+    {
+        "id": "af42cff9a22cd9f6",
+        "type": "debug",
+        "z": "00a4d4247dbe7864",
+        "name": "BLE",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 610,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "e90184ce56483dc2",
+        "type": "function",
+        "z": "00a4d4247dbe7864",
+        "name": "BTHome_v2_LYWSD03MMC",
+        "func": "const bytes = Array.from(msg.payload.serviceDataList[0].legacyDataList || []);\n\nif (bytes.length === 0) {\n    return;\n}\n\nconst deviceInfo = bytes[0];\nconst version = deviceInfo >> 5;\n\nconst encrypted = (deviceInfo & 0x01) !== 0;\n\nif (version !== 2) {\n    return;\n}\n\nif (encrypted) {\n    return;\n}\n\nconst result = {};\n\nlet i = 1;\n\nwhile (i < bytes.length) {\n    const objectId = bytes[i++];\n\n    switch (objectId) {\n        case 0x00:\n            result.packetId = bytes[i++];\n            break;\n\n        case 0x01:\n            result.battery = bytes[i++];\n            break;\n\n        case 0x02: {\n            if (i + 1 >= bytes.length) {\n                continue;\n            }\n\n            let value = bytes[i] | (bytes[i + 1] << 8);\n            if (value & 0x8000) {\n                value -= 0x10000;\n            }\n\n            result.temperature = value * 0.01;\n\n            i += 2;\n            break;\n        }\n\n        case 0x03: {\n            if (i + 1 >= bytes.length) {\n                continue;\n            }\n\n            const value = bytes[i] | (bytes[i + 1] << 8);\n\n            result.humidity = value * 0.01;\n\n            i += 2;\n            break;\n        }\n\n        case 0x0c: {\n            if (i + 1 >= bytes.length) {\n                continue;\n            }\n\n            const value = bytes[i] | (bytes[i + 1] << 8);\n\n            result.voltage = value * 0.001;\n\n            i += 2;\n            break;\n        }\n\n        case 0x10:\n            result.power = bytes[i++] !== 0;\n            break;\n\n        case 0x11:\n            result.opening = bytes[i++] !== 0;\n            break;\n\n        default:\n            continue;\n    }\n}\n\nif (Object.keys(result).length === 0) {\n    return;\n}\nmsg.payload = {\n    address: msg.payload.address,\n    rssi: msg.payload.rssi,\n    ...result,\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 220,
+        "wires": [
+            [
+                "af42cff9a22cd9f6"
+            ]
+        ]
+    },
+    {
+        "id": "8f2238c08f0690b9",
+        "type": "esphome-device",
+        "name": "esp32-test.local",
+        "host": "192.168.0.254",
+        "port": 6053,
+        "ping": 20,
+        "reconnect": 90,
+        "suppressErrors": false,
+        "loglevel": "0",
+        "logdump": false,
+        "ble": true
+    },
+    {
+        "id": "b14c583734d9d8e8",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-esphome": "0.3.4"
+        }
+    }
+]
