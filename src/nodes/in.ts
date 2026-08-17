@@ -95,7 +95,10 @@ module.exports = (RED: NodeAPI) => {
     };
 
     const onBle = (data: any) => {
-      let address: string = config.bleaddress;
+      const address: string = config.bleaddress;
+      if (!address) {
+        return;
+      }
       const payload: any = {...data};
 
       const macs: Set<string> = new Set(

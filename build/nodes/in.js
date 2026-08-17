@@ -84,7 +84,10 @@ module.exports = (RED) => {
             });
         };
         const onBle = (data) => {
-            let address = config.bleaddress;
+            const address = config.bleaddress;
+            if (!address) {
+                return;
+            }
             const payload = Object.assign({}, data);
             const macs = new Set(address.split(/\s|;|,/).map((mac) => mac.toLowerCase().replace(/[^a-f0-9]/g, '')));
             payload.address = payload.address.toString(16);
