@@ -38,6 +38,7 @@ module.exports = (RED) => {
             }
         };
         const onState = (state) => {
+            var _a, _b;
             const payload = Object.assign({}, state);
             const topic = config.topic === undefined ? '' : config.topic;
             // All Entities
@@ -59,7 +60,7 @@ module.exports = (RED) => {
                     text = 'json';
                 }
                 else {
-                    if (entity.config && entity.config.accuracyDecimals >= 0) {
+                    if ((entity === null || entity === void 0 ? void 0 : entity.config) && ((_a = entity === null || entity === void 0 ? void 0 : entity.config) === null || _a === void 0 ? void 0 : _a.accuracyDecimals) >= 0) {
                         text = String((0, utils_1.roundToX)(payload.state, entity.config.accuracyDecimals));
                     }
                     else {
@@ -69,7 +70,7 @@ module.exports = (RED) => {
                 if (text && text.length > 32) {
                     text = `${text.substring(0, 32)}...`;
                 }
-                if (text && entity.config && entity.config.unitOfMeasurement) {
+                if (text && (entity === null || entity === void 0 ? void 0 : entity.config) && ((_b = entity === null || entity === void 0 ? void 0 : entity.config) === null || _b === void 0 ? void 0 : _b.unitOfMeasurement)) {
                     text = `${text} ${entity.config.unitOfMeasurement}`;
                 }
             }
@@ -85,9 +86,9 @@ module.exports = (RED) => {
         const onBle = (data) => {
             let address = config.bleaddress;
             const payload = Object.assign({}, data);
-            address = address.toLowerCase().replace(/[^a-f0-9]/g, '');
+            const macs = new Set(address.split(/\s|;|,/).map((mac) => mac.toLowerCase().replace(/[^a-f0-9]/g, '')));
             payload.address = payload.address.toString(16);
-            if (payload.address != address) {
+            if (!macs.has(payload.address)) {
                 return;
             }
             delete payload.key;
