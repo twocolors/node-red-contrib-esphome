@@ -8,8 +8,7 @@
     "rootDir": "src",
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
-    "ignoreDeprecations": "6.0"
+    "target": "es6"
   },
   "include": [
     "src"
